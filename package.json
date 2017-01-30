@@ -1,0 +1,72 @@
+{
+  "name": "util.fixture",
+  "version": "0.0.1",
+  "author": "jmquigley <jmquigley@outlook.com>",
+  "description": "Test fixture library",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmquigley/util.fixture"
+  },
+  "bugs": {
+    "url": "https://github.com/jmquigley/util.fixture/issues"
+  },
+  "engines": {
+    "node": ">=7.4"
+  },
+  "dependencies": {
+    "expand-home-dir": "0.0.3",
+    "fs-extra": "^2.0.0",
+    "lodash": "^4.17.4",
+    "object-assign": "^4.1.1",
+    "util.rstrip": "0.0.3",
+    "uuid": "^3.0.1",
+    "yargs": "^6.6.0"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "coveralls": "^2.11.15",
+    "nyc": "^10.1.2",
+    "xo": "^0.17.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node cmd.js --postinstall",
+    "test": "node cmd.js --testing",
+    "report": "node cmd.js --reporting"
+  },
+  "xo": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "global": [
+      "window",
+      "describe",
+      "it",
+      "JSON"
+    ],
+    "rules": {
+      "space-before-function-paren": "off",
+      "no-multiple-empty-lines": [
+        "error",
+        {
+          "max": 2,
+          "maxEOF": 1
+        }
+      ],
+      "unicorn/filename-case": [
+        "error",
+        {
+          "case": "snakeCase"
+        }
+      ],
+      "arrow-parens": [
+        "error",
+        "as-needed"
+      ]
+    }
+  }
+}
