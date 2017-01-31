@@ -23,6 +23,7 @@ let unitTestBaseDir = null;
  *     for the test
  *     - fixtureDirectory: the base location where fixtures can be fond with
  *     the name parameter.
+ *
  * @returns {string} the path where the fixture was copied.  This becomes the
  * id value that is passed to destroy.
  */
@@ -32,20 +33,33 @@ function copy(name, opts = undefined) {
 		fixtureDirectory: './test/fixtures'
 	}, opts);
 
-	unitTestBaseDir = opts.tempDirectory;
-
 	let src = path.resolve(path.join(opts.fixtureDirectory, name));
 	if (!fs.existsSync(src)) {
 		throw new Error(`Invalid fixture name given: ${name}`);
 	}
 
-	let dst = home(path.join(unitTestBaseDir, uuidV4()));
-	if (!fs.existsSync(dst)) {
-		fs.mkdirsSync(dst);
-	}
-
+	let dst = tmpdir(opts);
 	fs.copySync(src, dst);
 	return dst;
+}
+
+
+/**
+ * Removes a fixture that was created by the copy operation.  This will check
+ * to ensure that the base path matches the id.  If that does not match, then
+ * an exception will be thrown.
+ *
+ * @param id {string} the path that should be removed.  It must reside within
+ * the unit test base directory.
+ */
+function destroy(id) {
+	if (unitTestBaseDir !== null) {
+		if (!id.startsWith(unitTestBaseDir)) {
+			throw new Error(`Given ID is NOT within the unit test location: ${id}`);
+		}
+
+		fs.removeSync(id);
+	}
 }
 
 
@@ -71,28 +85,34 @@ function load(name, opts = undefined) {
 	return JSON.parse(fs.readFileSync(path.join(src, opts.dataFile)));
 }
 
-
 /**
- * Removes a fixture that was created by the copy operation.  This will check
- * to ensure that the base path matches the id.  If that does not match, then
- * an exception will be thrown.
+ * Creates a temporary directory within the unit test data directory.
  *
- * @param id {string} the path that should be removed.  It must reside within
- * the unit test base directory.
+ * @param opts {object} optional parameters
+ *
+ *     - tempDirectory: the base location where the fixtures will copy the data
+ *     for the test
+ *
+ * @returns {string} a directory path that can be used for testing.
  */
-function destroy(id) {
-	if (unitTestBaseDir !== null) {
-		if (!id.startsWith(unitTestBaseDir)) {
-			throw new Error(`Given ID is NOT within the unit test location: ${id}`);
-		}
+function tmpdir(opts = undefined) {
+	opts = objectAssign({
+		tempDirectory: home(path.join('~/', '.tmp', 'unit-test-data'))
+	}, opts);
 
-		fs.removeSync(id);
+	unitTestBaseDir = opts.tempDirectory;
+	let dst = home(path.join(unitTestBaseDir, uuidV4()));
+	if (!fs.existsSync(dst)) {
+		fs.mkdirsSync(dst);
 	}
+
+	return dst;
 }
 
 
 module.exports = {
 	copy: copy,
+	destroy: destroy,
 	load: load,
-	destroy: destroy
+	tmpdir: tmpdir
 };
