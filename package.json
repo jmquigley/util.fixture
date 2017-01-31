@@ -28,7 +28,7 @@
     "ava": "^0.17.0",
     "coveralls": "^2.11.15",
     "nyc": "^10.1.2",
-    "util.pkgwrap": "0.0.1",
+    "util.pkgwrap": "0.0.2",
     "xo": "^0.17.1"
   },
   "main": "index.js",
