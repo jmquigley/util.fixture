@@ -33,9 +33,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "postinstall": "node cmd.js --postinstall",
-    "test": "node cmd.js --testing",
-    "report": "node cmd.js --reporting"
+    "postinstall": "pkgwrap --postinstall",
+    "test": "pkgwrap --testing",
+    "report": "pkgwrap --reporting",
+	  "coverage": "pkgwrap --coverage"
   },
   "xo": {
     "env": {
