@@ -1,6 +1,6 @@
 {
   "name": "util.fixture",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "jmquigley <jmquigley@outlook.com>",
   "description": "Test fixture library",
   "private": false,
@@ -36,7 +36,7 @@
     "postinstall": "pkgwrap --postinstall",
     "test": "pkgwrap --testing",
     "report": "pkgwrap --reporting",
-	  "coverage": "pkgwrap --coverage"
+    "coverage": "pkgwrap --coverage"
   },
   "xo": {
     "env": {
