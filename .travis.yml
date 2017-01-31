@@ -3,4 +3,4 @@ node_js:
     - '7'
 
 after_success:
-    - 'npm coverage'
+    - 'npm run coverage'
