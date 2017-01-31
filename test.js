@@ -67,7 +67,8 @@ test('Load test fixture 3 and perform replacement', t => {
 test('Load test fixture 4 and perform replacement after copy', t => {
 	let id = fixture.copy('test-fixture-4', {
 		templateData: {
-			replaceMe: 'test data'
+			replaceMe: 'test data',
+			filename: 'test.txt'
 		}
 	});
 
@@ -75,7 +76,11 @@ test('Load test fixture 4 and perform replacement after copy', t => {
 	t.true(fs.existsSync(id));
 	t.true(fs.existsSync(path.join(id, 'test-directory')));
 	t.true(fs.existsSync(path.join(id, 'test-file.txt')));
-	t.is(fs.readFileSync(path.join(id, 'test-file.txt')).toString(), 'Test information\n\ntest data\n');
+
+	let f = fs.readFileSync(path.join(id, 'test-file.txt')).toString();
+	let s = `Test information\n\ntest data\n\n${id}/test.txt\n`;
+
+	t.is(f, s);
 
 	fixture.destroy(id);
 

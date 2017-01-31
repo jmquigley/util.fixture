@@ -1,3 +1,5 @@
 Test information
 
 {replaceMe}
+
+{DIR}{filename}

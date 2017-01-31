@@ -36,7 +36,9 @@ function copy(name, opts = undefined) {
 	opts = objectAssign({
 		tempDirectory: home(path.join('~/', '.tmp', 'unit-test-data')),
 		fixtureDirectory: './test/fixtures',
-		templateData: null
+		templateData: {
+			DIR: ''
+		}
 	}, opts);
 
 	let src = path.resolve(path.join(opts.fixtureDirectory, name));
@@ -46,17 +48,16 @@ function copy(name, opts = undefined) {
 
 	let dst = tmpdir(opts);
 	fs.copySync(src, dst);
+	opts.templateData.DIR = path.join(dst, path.sep);
 
 	// get the list of all files in the destination and scan them all for
 	// replacement values.
-	if (opts.templateData !== null) {
-		let files = walk(dst, {nodir: true});
-		files.forEach(function (file) {
-			let inp = fs.readFileSync(file.path);
-			inp = format(inp.toString(), opts.templateData);
-			fs.writeFileSync(file.path, inp);
-		});
-	}
+	let files = walk(dst, {nodir: true});
+	files.forEach(function (file) {
+		let inp = fs.readFileSync(file.path);
+		inp = format(inp.toString(), opts.templateData);
+		fs.writeFileSync(file.path, inp);
+	});
 
 	return dst;
 }
@@ -103,7 +104,9 @@ function load(name, opts = undefined) {
 	opts = objectAssign({
 		dataFile: 'obj.json',
 		fixtureDirectory: './test/fixtures',
-		templateData: null
+		templateData: {
+			TMPDIR: ''
+		}
 	}, opts);
 
 	let src = path.resolve(path.join(opts.fixtureDirectory, name));
@@ -112,9 +115,7 @@ function load(name, opts = undefined) {
 	}
 
 	let inp = fs.readFileSync(path.join(src, opts.dataFile));
-	if (opts.templateData !== null) {
-		inp = format(inp.toString(), opts.templateData);
-	}
+	inp = format(inp.toString(), opts.templateData);
 
 	return JSON.parse(inp);
 }

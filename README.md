@@ -167,3 +167,9 @@ Creates a temporary directory within the unit test data directory.  The default 
 
 ###### options:
 - `tempDirectory {string}`: The base location where the fixture will be temporarily located.  The default location is `~/.tmp/unit-test-data`.
+
+
+## Template Data Variables
+The following are template variables that automatically added to the variable expansion list (templateData).
+
+- `DIR`: the location where the fixture will be copied.
