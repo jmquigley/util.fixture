@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
 const objectAssign = require('object-assign');
+const format = require('string-template');
 
 let unitTestBaseDir = null;
 
@@ -69,12 +70,23 @@ function destroy(id) {
  * a destroy operation.
  *
  * @param name {string} the name of the fixture to copy
- * @param opts
+ * @param opts optional arguments
+ *
+ *     - dataFile: the name of the JSON file within this fixture.  The default
+ *     is 'obj.json'.
+ *     - fixtureDirectory: the base location where fixtures can be fond with
+ *     the name parameter.
+ *     - templateData: a map of data values that are used for replacement
+ *     within the JSON file.  The string-template library is used to perform
+ *     the replacement
+ *
+ * @returns {object} a JSON object represented by dataFile.
  */
 function load(name, opts = undefined) {
 	opts = objectAssign({
 		dataFile: 'obj.json',
-		fixtureDirectory: './test/fixtures'
+		fixtureDirectory: './test/fixtures',
+		templateData: null
 	}, opts);
 
 	let src = path.resolve(path.join(opts.fixtureDirectory, name));
@@ -82,8 +94,14 @@ function load(name, opts = undefined) {
 		throw new Error(`Invalid fixture name given: ${name}`);
 	}
 
-	return JSON.parse(fs.readFileSync(path.join(src, opts.dataFile)));
+	let inp = fs.readFileSync(path.join(src, opts.dataFile));
+	if (opts.templateData !== null) {
+		inp = format(inp.toString(), opts.templateData);
+	}
+
+	return JSON.parse(inp);
 }
+
 
 /**
  * Creates a temporary directory within the unit test data directory.
@@ -95,7 +113,7 @@ function load(name, opts = undefined) {
  *
  * @returns {string} a directory path that can be used for testing.
  */
-function tmpdir(opts = undefined) {
+function tmpdir(opts) {
 	opts = objectAssign({
 		tempDirectory: home(path.join('~/', '.tmp', 'unit-test-data'))
 	}, opts);

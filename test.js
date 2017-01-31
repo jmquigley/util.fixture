@@ -35,12 +35,44 @@ test('Copy and destroy test fixture 1', t => {
 
 test('Load test fixture 2', t => {
 	let obj = fixture.load('test-fixture-2');
+
 	t.true(obj && typeof obj === 'object');
 	t.true(Object.prototype.hasOwnProperty.call(obj, 'testData'));
 	t.true(Object.prototype.hasOwnProperty.call(obj, 'testBool'));
 	t.true(obj.testBool);
 	t.is(obj.testData, 'test data');
+
 	obj = null;
+});
+
+
+test('Load text fixture 3 and perform replacement', t => {
+	let obj = fixture.load('test-fixture-3', {
+		dataFile: 'somefile.txt',
+		templateData: {
+			replaceMe: 'test data'
+		}
+	});
+
+	t.true(obj && typeof obj === 'object');
+	t.true(Object.prototype.hasOwnProperty.call(obj, 'testData'));
+	t.true(Object.prototype.hasOwnProperty.call(obj, 'testBool'));
+	t.true(obj.testBool);
+	t.is(obj.testData, 'test data');
+
+	obj = null;
+});
+
+
+test('Create temporary directory and remove', t => {
+	let tmpdir = fixture.tmpdir();
+
+	t.true(tmpdir && typeof tmpdir === 'string');
+	t.true(fs.existsSync(tmpdir));
+
+	fixture.destroy(tmpdir);
+
+	t.false(fs.existsSync(tmpdir));
 });
 
 

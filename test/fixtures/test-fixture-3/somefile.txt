@@ -1,0 +1,4 @@
+{
+	"testData": "{replaceMe}",
+	"testBool": true
+}
