@@ -6,6 +6,7 @@ const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
 const objectAssign = require('object-assign');
 const format = require('string-template');
+const walk = require('klaw-sync');
 
 let unitTestBaseDir = null;
 
@@ -24,6 +25,9 @@ let unitTestBaseDir = null;
  *     for the test
  *     - fixtureDirectory: the base location where fixtures can be fond with
  *     the name parameter.
+ *     - templateData: a map of data values that are used for replacement
+ *     within the files.  The string-template library is used to perform
+ *     the replacement
  *
  * @returns {string} the path where the fixture was copied.  This becomes the
  * id value that is passed to destroy.
@@ -31,7 +35,8 @@ let unitTestBaseDir = null;
 function copy(name, opts = undefined) {
 	opts = objectAssign({
 		tempDirectory: home(path.join('~/', '.tmp', 'unit-test-data')),
-		fixtureDirectory: './test/fixtures'
+		fixtureDirectory: './test/fixtures',
+		templateData: null
 	}, opts);
 
 	let src = path.resolve(path.join(opts.fixtureDirectory, name));
@@ -41,6 +46,18 @@ function copy(name, opts = undefined) {
 
 	let dst = tmpdir(opts);
 	fs.copySync(src, dst);
+
+	// get the list of all files in the destination and scan them all for
+	// replacement values.
+	if (opts.templateData !== null) {
+		let files = walk(dst, {nodir: true});
+		files.forEach(function (file) {
+			let inp = fs.readFileSync(file.path);
+			inp = format(inp.toString(), opts.templateData);
+			fs.writeFileSync(file.path, inp);
+		});
+	}
+
 	return dst;
 }
 

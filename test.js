@@ -46,7 +46,7 @@ test('Load test fixture 2', t => {
 });
 
 
-test('Load text fixture 3 and perform replacement', t => {
+test('Load test fixture 3 and perform replacement', t => {
 	let obj = fixture.load('test-fixture-3', {
 		dataFile: 'somefile.txt',
 		templateData: {
@@ -61,6 +61,25 @@ test('Load text fixture 3 and perform replacement', t => {
 	t.is(obj.testData, 'test data');
 
 	obj = null;
+});
+
+
+test('Load test fixture 4 and perform replacement after copy', t => {
+	let id = fixture.copy('test-fixture-4', {
+		templateData: {
+			replaceMe: 'test data'
+		}
+	});
+
+	t.true(id && typeof id === 'string');
+	t.true(fs.existsSync(id));
+	t.true(fs.existsSync(path.join(id, 'test-directory')));
+	t.true(fs.existsSync(path.join(id, 'test-file.txt')));
+	t.is(fs.readFileSync(path.join(id, 'test-file.txt')).toString(), 'Test information\n\ntest data\n');
+
+	fixture.destroy(id);
+
+	t.false(fs.existsSync(id));
 });
 
 
