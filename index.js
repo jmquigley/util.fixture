@@ -7,6 +7,7 @@ const home = require('expand-home-dir');
 const objectAssign = require('object-assign');
 const format = require('string-template');
 const walk = require('klaw-sync');
+const getFileList = require('util.filelist');
 
 
 function Fixture (name, opts = null) {
@@ -15,9 +16,10 @@ function Fixture (name, opts = null) {
 	}
 
 	opts = objectAssign({
-		fixtureDirectory: './test/fixtures',
 		basedir: home(path.join('~/', '.tmp', 'unit-test-data')),
-		dataFile: 'obj.json',
+		dataFile: 'data.list',
+		fixtureDirectory: './test/fixtures',
+		jsonFile: 'obj.json',
 		templateData: {
 			DIR: ''
 		}
@@ -28,6 +30,7 @@ function Fixture (name, opts = null) {
 		dir: '',
 		files: [],
 		obj: {},
+		data: [],
 		src: '',
 		cleanup: function () {
 			if (this.dir !== '') {
@@ -69,8 +72,12 @@ function Fixture (name, opts = null) {
 		inp = format(inp.toString(), opts.templateData);
 		fs.writeFileSync(file.path, inp);
 
-		if (path.basename(file.path) === opts.dataFile) {
+		if (file.path === path.join(fixture.dir, opts.jsonFile)) {
 			fixture.obj = JSON.parse(inp);
+		}
+
+		if (file.path === path.join(fixture.dir, opts.dataFile)) {
+			fixture.data = getFileList(file.path);
 		}
 	});
 

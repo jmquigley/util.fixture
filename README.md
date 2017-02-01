@@ -89,7 +89,8 @@ Loads a fixture and then searches through all of the files in that fixture for r
 const Fixture = require('util.fixture');
 
 let fixture = Fixture('test-fixture-4', {
-	dataFile: 'test-directory/somefile.txt',
+	jsonFile: 'test-directory/somefile.json',
+    dataFile: 'test-file.txt',
     templateData: {
         replaceMe: 'test data'
     }
@@ -100,15 +101,15 @@ let fixture = Fixture('test-fixture-4', {
 fixture.destroy(id);
 ```
 
-An example directory structure for `test-fixture-4` would be:
+An example directory structure for `test-fixture-4` within the temporary location would be:
 
 ```
 test-directory/
-   somefile.txt
+   somefile.json
 test-file.txt
 ```
 
-The creation of the class would copy the fixture to the temporary location, perform a string replacement on each of the files (ignoring directories), save them to their temporary versions, and then parse the `dataFile` parameter into `fixture.obj`.  The example text file above named `test-file` would be:
+The creation of the constructor would copy the fixture to the temporary location, perform a string replacement on each of the files (ignoring directories), save them to their temporary versions, and then parse the `dataFile` parameter into `fixture.data`.  The example text file above named `test-file.txt` would be:
 
 ```
 Test information
@@ -128,7 +129,7 @@ test data
 
 ### Fixture({name}, opts)
 
-This is a single class exposed by the module.  
+This is a single constructor function exposed by the module.
 
 ##### parameters
 
@@ -137,10 +138,11 @@ This is a single class exposed by the module.
 
 ##### options
 
-- `basedir {string}`: The base location where the fixture will be temporarily located. The default location is `~/.tmp/unit-test-data`.
-- `fixtureDirectory {string}`: The location within the project where fixtures are found.
-- `templateData {object}`: a map/object of data values that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked for replacement.
-- `dataFile {string}`: The name of the JSON file within the fixture location. By default this value is `obj.json`.
+- `basedir {string}`: The base location where the fixture will be temporarily located. The default location is `~/.tmp/unit-test-data/`.
+- `fixtureDirectory {string}`: The location within the project where fixtures are found.  The default is `./test/fixtures`.
+- `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
+- `dataFile {string}`: The name of the data list file, within the fixture location, that will be parsed and saved into `fixture.data`. By default this file is `data.list`.  It is parsed by the [util.filelist](https://www.npmjs.com/package/util.filelist) module.  This is a way to get a large list of information into the fixture.
+- `jsonFile {string}`: The name of a JSON data file that will be parsed and saved into `fixture.obj`.  By default this file is `obj.json`.
 
 ##### attributes
 Instantiation of the class returns an object with the following attributes:

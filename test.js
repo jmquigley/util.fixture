@@ -64,7 +64,7 @@ test('Load test fixture 2', t => {
 
 test('Load test fixture 3 and perform replacement', t => {
 	let fixture = new Fixture('test-fixture-3', {
-		dataFile: 'somefile.txt',
+		jsonFile: 'somefile.json',
 		templateData: {
 			replaceMe: 'test data'
 		}
@@ -82,7 +82,8 @@ test('Load test fixture 3 and perform replacement', t => {
 
 test('Load test fixture 4 and perform replacement after copy', t => {
 	let fixture = new Fixture('test-fixture-4', {
-		dataFile: 'somefile.txt',
+		jsonFile: 'test-directory/somefile.json',
+		dataFile: 'test-file.txt',
 		templateData: {
 			replaceMe: 'test data',
 			filename: 'test.txt'
@@ -93,9 +94,14 @@ test('Load test fixture 4 and perform replacement after copy', t => {
 	t.true(fs.existsSync(fixture.dir));
 	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory')));
 	t.true(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
-	t.true(fs.existsSync(path.join(fixture.dir, 'somefile.txt')));
+	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory', 'somefile.json')));
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
+	t.true(fixture.data instanceof Array);
+	t.is(fixture.data.length, 3);
+	t.is(fixture.data[0], 'Test information');
+	t.is(fixture.data[1], 'test data');
+	t.is(fixture.data[2], path.join(fixture.dir, 'test.txt'));
 	t.true(fixture.obj.testBool);
 	t.is(fixture.obj.testData, 'test data');
 
