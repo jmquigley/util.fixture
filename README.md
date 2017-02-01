@@ -2,11 +2,11 @@
 
 > Test fixture library
 
-A testing fixture library to simplify managing the lifecycle of a test.  A testing fixture in this context is set of static artifacts or templates that are copied/loaded into a test, used for that test, and then destroyed when complete.  The library looks for fixtures in `./test/fixtures`.  This directory contains a set of additional directories where each of these sub directories represent a fixture that can be used by name in a test.  e.g.  
+A testing fixture class to simplify managing the lifecycle of a test.  A testing fixture in this context is set of static artifacts or templates that are copied/loaded into a test, used for that test, and then destroyed when complete.  The class looks for fixtures in `./test/fixtures`.  This directory contains a set of additional directories where each of these sub directories represent a fixture that can be used by name in a test.  e.g.  
 
     ./test/fixtures/some-test
 
-This would contain a usable fixture named `some-test`.  The name of the fixture is used by the library to copy/load it.  The usage below explains how.
+This would contain a usable fixture named `some-test`.  The name of the fixture is a parameter to the function constructor.  The usage below explains how.
 
 ## Installation
 
@@ -23,37 +23,37 @@ $ npm install --save-dev util.fixture
 ## Usage
 
 #### Simple Fixture
-Copies the contents of a fixture to a temporary directory:
+Copies the contents of a fixture to a temporary directory.  When a new fixture is created it returns a new object with details about that fixture:
 ```
-const fixture = require('util.fixture');
+const Fixture = require('util.fixture');
 
-let id = fixture.copy('simple-test');
+let fixture = new Fixture('test-fixture-1');
 
 ... // your test
 
-fixture.destroy(id);
+fixture.cleanup();
 ```
-The `id` value returned is the temporary directory location where the fixture resides for this test.  Once the test is complete this fixture should be destroyed.
+This will expose the fixture location with `fixture.dir`.  That is the temporary location of the files that were copied.  The creation of the fixture always results in template replacement.  In this example there are no custom templates variables; only builtins (see below).  Once the test is complete this fixture should be destroyed with the cleanup method.
 
 #### Simple JSON
 Loads a JSON file saved in a fixture location for use as an object:
 ```
-const fixture = require('util.fixture');
+const Fixture = require('util.fixture');
 
-let obj = fixture.load('simple-json');
+let fixture = new Fixture('simple-json');
 
 ... // your test
 
-obj = null;
+fixture.cleanup();
 ```
-The `obj` is an object with whatever properties were defined in the fixture JSON file.  When the test is complete it can be set to `null`.
+This will load the fixture like the first example.  However, the fixture object also contains `fixture.obj` which is the JSON file parsed and stored as an object.
 
 #### JSON with Template Replacement
 Loads a JSON file saved in a fixture location and replaces text strings within it:
 ```
-const fixture = require('util.fixture');
+const Fixture = require('util.fixture');
 
-let obj = fixture.load('some-fixture', {
+let fixture = new Fixture('some-fixture', {
    	templateData: {
    	    replaceMe: 'test data'
    	}
@@ -61,7 +61,7 @@ let obj = fixture.load('some-fixture', {
 
 ... // your test
 
-obj = null;
+fixture.cleanup();
 ```
 
 This would search the given JSON file for all instances of the string `{replaceMe}` and substitute the given value in the template (`test data`).  The example JSON in this case would be:
@@ -80,13 +80,16 @@ resulting in:
 }
 ```
 
+It will lead to a fixture object returned like the previous two examples.  Also
+
 #### Fixture with Template replacement
-Loads a fixture and then searches through all of the files for replacement values.
+Loads a fixture and then searches through all of the files in that fixture for replacement values.
 
 ```
-const fixture = require('util.fixture');
+const Fixture = require('util.fixture');
 
-let id = fixture.copy('test-fixture-4', {
+let fixture = Fixture('test-fixture-4', {
+	dataFile: 'test-directory/somefile.txt',
     templateData: {
         replaceMe: 'test data'
     }
@@ -105,7 +108,7 @@ test-directory/
 test-file.txt
 ```
 
-The `.copy` process above would copy the fixture to the temporary location, perform a string replacement on each of the files (ignoring directories), and then save them to their temporary versions.  The example text file above named `test-file` would be:
+The creation of the class would copy the fixture to the temporary location, perform a string replacement on each of the files (ignoring directories), save them to their temporary versions, and then parse the `dataFile` parameter into `fixture.obj`.  The example text file above named `test-file` would be:
 
 ```
 Test information
@@ -122,52 +125,32 @@ test data
 ```
 
 ## API
-The library contains four methods:
 
-- `.copy`
-- `.load`
-- `.destroy`
-- `.tmpdir`
+### Fixture({name}, opts)
 
-### copy({name}, opts)
-Looks in the `./test/fixtures/{name}` directory and copies it to a temporary directory for this test.  The location of the directory is returned by this call (referred to as the id).  The return from this copy operation is later sent to the `destroy` call to remove the temporary fixture.  The id value can be used to reference the items as an absolute path to the items in the fixture.
+This is a single class exposed by the module.  
 
-###### parameters
+##### parameters
+
 - `name {string}`: The name of the fixture to use.
 - `opts: {object}`: optional parameters (below)
 
-###### options
-- `tempDirectory {string}`: The base location where the fixture will be temporarily located.  The default location is `~/.tmp/unit-test-data`.
+##### options
+
+- `basedir {string}`: The base location where the fixture will be temporarily located. The default location is `~/.tmp/unit-test-data`.
 - `fixtureDirectory {string}`: The location within the project where fixtures are found.
-- `templateData {object}`: a map/object of data values that are used for replacement within each file.  The string-template library is used to perform the replacement.  All files are checked for replacement if this is used.
+- `templateData {object}`: a map/object of data values that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked for replacement.
+- `dataFile {string}`: The name of the JSON file within the fixture location. By default this value is `obj.json`.
 
-### load({name}, opts)
-Looks in the `./test/fixtures/{name}` for `obj.json` file.  It reads this file and returns a new reference to this object.  This type doesn't require a destroy operation.
+##### attributes
+Instantiation of the class returns an object with the following attributes:
 
-###### parameters
-- `name {string}`: The name of the fixture to use.
-- `opts: {object}`: optional parameters (below)
-
-###### options
-- `dataFile {string}`: The name of the JSON file within the fixture location.  By default this value is `obj.json`.
-- `fixtureDirectory {string}`: The location within the project where fixtures are found.
-- `templateData {object}`: a map/object of data values that are used for replacement within the JSON file.  The string-template library is used to perform the replacement.
-
-### destroy({id})
-Takes a location that was returned by the `copy` operation and removes it.
-
-###### parameters
-- `id {string}`: The location returned by copy that should be destroyed.
-
-### tmpdir(opts)
-Creates a temporary directory within the unit test data directory.  The default base directory is `~/.tmp/unit-test/data`.  This can be changed with an optional parameter.  The directory location is returned by this call.  It must be sent to the `destroy` method when finished (like the copy method).
-
-###### parameters
-- `opts: {object}`: optional parameters (below)
-
-###### options:
-- `tempDirectory {string}`: The base location where the fixture will be temporarily located.  The default location is `~/.tmp/unit-test-data`.
-
+- `.basedir` - the root directory for all tests.  This can be changed as an option to the function constructor
+- `.cleanup()` - removes the temporary directory and all artifacts copied there.  Generally this would be used at the end of a test.
+- `.dir` - the location of the temporary directory created for this fixture.
+- `.files` - an array of files that were found within the fixture.
+- `.obj` - if the fixture contains `obj.json` or a JSON file named by the `dataFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
+- `.src` - the absolue path directory for the fixture files.
 
 ## Template Data Variables
 The following are template variables that automatically added to the variable expansion list (templateData).

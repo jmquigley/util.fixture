@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const test = require('ava');
 const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
-const fixture = require('./index');
+const Fixture = require('./index');
 
 let unitTestBaseDir = home(path.join('~/', '.tmp', 'unit-test-data'));
 let unitTestDir = home(path.join(unitTestBaseDir, uuidV4()));
@@ -18,112 +18,125 @@ test.after.always('test cleanup', t => {
 	t.pass();
 });
 
+
 test('Copy and destroy test fixture 1', t => {
-	let id = fixture.copy('test-fixture-1');
+	let fixture = new Fixture('test-fixture-1');
 
-	t.true(id && typeof id === 'string');
-	t.true(fs.existsSync(id));
-	t.true(fs.existsSync(path.join(id, 'test-directory')));
-	t.true(fs.existsSync(path.join(id, 'test-file.txt')));
-	t.is(fs.readFileSync(path.join(id, 'test-file.txt')).toString(), 'Test information\n');
+	t.true(fixture && typeof fixture === 'object');
+	t.true(fs.existsSync(fixture.dir));
+	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory')));
+	t.true(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
+	t.is(fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString(), 'Test information\n');
 
-	fixture.destroy(id);
+	fixture.cleanup();
 
-	t.false(fs.existsSync(id));
+	t.false(fs.existsSync(fixture.dir));
+});
+
+
+test('Copy and destroy test fixture 1 without new', t => {
+	let fixture = Fixture('test-fixture-1');  // eslint-disable-line new-cap
+
+	t.true(fixture && typeof fixture === 'object');
+	t.true(fs.existsSync(fixture.dir));
+	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory')));
+	t.true(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
+	t.is(fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString(), 'Test information\n');
+
+	fixture.cleanup();
+
+	t.false(fs.existsSync(fixture.dir));
 });
 
 
 test('Load test fixture 2', t => {
-	let obj = fixture.load('test-fixture-2');
+	let fixture = new Fixture('test-fixture-2');
 
-	t.true(obj && typeof obj === 'object');
-	t.true(Object.prototype.hasOwnProperty.call(obj, 'testData'));
-	t.true(Object.prototype.hasOwnProperty.call(obj, 'testBool'));
-	t.true(obj.testBool);
-	t.is(obj.testData, 'test data');
+	t.true(fixture && typeof fixture === 'object');
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
+	t.true(fixture.obj.testBool);
+	t.is(fixture.obj.testData, 'test data');
 
-	obj = null;
+	fixture.cleanup();
 });
 
 
 test('Load test fixture 3 and perform replacement', t => {
-	let obj = fixture.load('test-fixture-3', {
+	let fixture = new Fixture('test-fixture-3', {
 		dataFile: 'somefile.txt',
 		templateData: {
 			replaceMe: 'test data'
 		}
 	});
 
-	t.true(obj && typeof obj === 'object');
-	t.true(Object.prototype.hasOwnProperty.call(obj, 'testData'));
-	t.true(Object.prototype.hasOwnProperty.call(obj, 'testBool'));
-	t.true(obj.testBool);
-	t.is(obj.testData, 'test data');
+	t.true(fixture && typeof fixture === 'object');
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
+	t.true(fixture.obj.testBool);
+	t.is(fixture.obj.testData, 'test data');
 
-	obj = null;
+	fixture.cleanup();
 });
 
 
 test('Load test fixture 4 and perform replacement after copy', t => {
-	let id = fixture.copy('test-fixture-4', {
+	let fixture = new Fixture('test-fixture-4', {
+		dataFile: 'somefile.txt',
 		templateData: {
 			replaceMe: 'test data',
 			filename: 'test.txt'
 		}
 	});
 
-	t.true(id && typeof id === 'string');
-	t.true(fs.existsSync(id));
-	t.true(fs.existsSync(path.join(id, 'test-directory')));
-	t.true(fs.existsSync(path.join(id, 'test-file.txt')));
+	t.true(fixture && typeof fixture === 'object');
+	t.true(fs.existsSync(fixture.dir));
+	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory')));
+	t.true(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
+	t.true(fs.existsSync(path.join(fixture.dir, 'somefile.txt')));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
+	t.true(fixture.obj.testBool);
+	t.is(fixture.obj.testData, 'test data');
 
-	let f = fs.readFileSync(path.join(id, 'test-file.txt')).toString();
-	let s = `Test information\n\ntest data\n\n${id}/test.txt\n`;
+	let f = fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString();
+	let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
 
 	t.is(f, s);
 
-	fixture.destroy(id);
+	fixture.cleanup();
 
-	t.false(fs.existsSync(id));
+	t.false(fs.existsSync(fixture.dir));
 });
 
 
 test('Create temporary directory and remove', t => {
-	let tmpdir = fixture.tmpdir();
+	let fixture = new Fixture('tmpdir');
 
-	t.true(tmpdir && typeof tmpdir === 'string');
-	t.true(fs.existsSync(tmpdir));
+	t.true(fixture && typeof fixture === 'object');
+	t.true(fs.existsSync(fixture.dir));
 
-	fixture.destroy(tmpdir);
+	fixture.cleanup();
 
-	t.false(fs.existsSync(tmpdir));
+	t.false(fs.existsSync(fixture.dir));
 });
 
 
 test('Bad fixture name with COPY (negative test)', t => {
 	try {
-		let obj = fixture.copy('aalksdjflaksdjflkasdj');
-		console.log(obj);
+		let fixture = new Fixture('aalksdjflaksdjflkasdj');
+		fixture.cleanup();
 	} catch (err) {
 		t.pass(err.message);
 	}
 });
 
 
-test('Bad fixture name with LOAD (negative test)', t => {
+test('Bad basedir in tempdir (negative test)', t => {
 	try {
-		let obj = fixture.load('asdfasdfasdgasdfad97asdg');
-		console.log(obj);
-	} catch (err) {
-		t.pass(err.message);
-	}
-});
-
-
-test('Bad id given to DESTROY (negative test)', t => {
-	try {
-		let obj = fixture.destroy('asdfasdfasdgasdfad97asdg');
-		console.log(obj);
+		let fixture = new Fixture('test-fixture-1');
+		fixture.basedir = 'alskjfalkgjald';
+		fixture.cleanup();
 	} catch (err) {
 		t.pass(err.message);
 	}
