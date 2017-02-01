@@ -7,17 +7,6 @@ const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
 const Fixture = require('./index');
 
-let unitTestBaseDir = home(path.join('~/', '.tmp', 'unit-test-data'));
-let unitTestDir = home(path.join(unitTestBaseDir, uuidV4()));
-if (fs.existsSync(unitTestDir)) {
-	fs.mkdirsSync(unitTestDir);
-}
-
-test.after.always('test cleanup', t => {
-	fs.removeSync(unitTestBaseDir);
-	t.pass();
-});
-
 
 test('Copy and destroy test fixture 1', t => {
 	let fixture = new Fixture('test-fixture-1');
@@ -113,6 +102,19 @@ test('Load test fixture 4 and perform replacement after copy', t => {
 	fixture.cleanup();
 
 	t.false(fs.existsSync(fixture.dir));
+});
+
+
+test('Change the base directory for testing and clenaup', t => {
+	let newbasedir = home(path.join('~/', '.tmp', 'unit-test-data', uuidV4()));
+	let fixture = new Fixture('tmpdir', {
+		basedir: newbasedir
+	});
+
+	t.true(fs.existsSync(newbasedir));
+	fixture.cleanup();
+	fs.removeSync(newbasedir);
+	t.false(fs.existsSync(newbasedir));
 });
 
 

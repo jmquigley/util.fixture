@@ -8,10 +8,13 @@ A testing fixture constructor function to simplify managing testing artifacts.  
 
 This would contain a usable fixture named `some-test`.  The name of the fixture is a parameter to the function constructor.  Within these named fixture directories one can place files and directories used by a test.  See the usage section below on how to use this within a test.
 
+The reason for this module is to deal with concurrency in the [ava](https://github.com/avajs/ava) test runner.  It runs tests concurrently, so using one directory for test fixtures is a problem as the tests will share artifacts incorrectly (think of two tests trying to access the same file and writing different things at the same time).  This overcomes that issue by making a separate temporary location each time a fixture is instantiated; different tests will each have their own copy of the fixture.
+
 #### Features
 - Template replacement
 - Automatic parsing of a JSON file within the fixture
 - Parsing of a data file list
+- Can be used with concurrent test processing
 
 ## Installation
 
@@ -149,6 +152,7 @@ test data
 
 This sample file would also be [parsed as a file list](https://www.npmjs.com/package/util.filelist).  This would read each line from the file (ignoring blank lines and # comments) and save each line into an array named `fixture.data`.
 
+See [test.js](https://github.com/jmquigley/util.fixture/blob/master/test.js) in this repository for examples of these usage patterns.
 
 ## API
 
