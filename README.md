@@ -108,7 +108,7 @@ resulting in:
 It will lead to a fixture object returned like the previous two examples.
 
 
-#### Fixture with Template replacement
+#### Fixture with Template Replacement
 ```
 const Fixture = require('util.fixture');
 
@@ -122,7 +122,7 @@ let fixture = Fixture('test-fixture', {
 
 ... // your test
 
-fixture.destroy(id);
+fixture.cleanup();
 ```
 
 Loads a fixture and then searches through all of the files in that fixture for template replacement values.  The same replacements are applied to all files.  This example also demonstrates the use of optional parameters to change the names of the JSON file and data file name.  An example directory structure for `test-fixture` within the temporary location would be:
@@ -153,6 +153,21 @@ test data
 This sample file would also be [parsed as a file list](https://www.npmjs.com/package/util.filelist).  This would read each line from the file (ignoring blank lines and # comments) and save each line into an array named `fixture.data`.
 
 See [test.js](https://github.com/jmquigley/util.fixture/blob/master/test.js) in this repository for examples of these usage patterns.
+
+
+#### Empty Fixture (Temporary Directory)
+```
+const Fixture = require('util.fixture');
+
+let fixture = Fixture('tmpdir');
+
+... // your test
+
+fixture.cleanup();
+```
+
+A fixture with the name `tmpdir` is a special case.  This will create a temporary directory, but will have no files or directories within it.  It will not perform any template replacements.  The directory is accessible through `fixture.dir`.
+
 
 ## API
 
