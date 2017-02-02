@@ -23,6 +23,7 @@
     "object-assign": "^4.1.1",
     "string-template": "^1.0.0",
     "util.filelist": "0.0.9",
+    "util.pkgwrap": "0.0.5",
     "util.rstrip": "0.0.5",
     "uuid": "^3.0.1",
     "yargs": "^6.6.0"
@@ -31,15 +32,14 @@
     "ava": "^0.17.0",
     "coveralls": "^2.11.15",
     "nyc": "^10.1.2",
-    "util.pkgwrap": "0.0.5",
     "xo": "^0.17.1"
   },
   "main": "index.js",
   "scripts": {
-    "postinstall": "pkgwrap --postinstall",
-    "test": "pkgwrap --testing",
-    "report": "pkgwrap --reporting",
-    "coverage": "pkgwrap --coverage"
+    "postinstall": "./node_modules/.bin/pkgwrap --postinstall",
+    "test": "./node_modules/.bin/pkgwrap --testing",
+    "report": "./node_modules/.bin/pkgwrap --reporting",
+    "coverage": "./node_modules/.bin/pkgwrap --coverage"
   },
   "xo": {
     "env": {
