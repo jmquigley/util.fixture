@@ -23,7 +23,7 @@
     "object-assign": "^4.1.1",
     "string-template": "^1.0.0",
     "util.filelist": "0.0.9",
-    "util.rstrip": "0.0.3",
+    "util.rstrip": "0.0.5",
     "uuid": "^3.0.1",
     "yargs": "^6.6.0"
   },
@@ -31,7 +31,7 @@
     "ava": "^0.17.0",
     "coveralls": "^2.11.15",
     "nyc": "^10.1.2",
-    "util.pkgwrap": "0.0.2",
+    "util.pkgwrap": "0.0.5",
     "xo": "^0.17.1"
   },
   "main": "index.js",
