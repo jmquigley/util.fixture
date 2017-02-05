@@ -10,78 +10,118 @@ const walk = require('klaw-sync');
 const getFileList = require('util.filelist');
 
 
-function Fixture (name, opts = null) {
-	if (!(this instanceof Fixture)) {
-		return new Fixture(name, opts);
-	}
+let currentBaseDir = home(path.join('~/', '.tmp', 'unit-test-data'));
 
-	opts = objectAssign({
-		basedir: home(path.join('~/', '.tmp', 'unit-test-data')),
-		dataFile: 'data.list',
-		fixtureDirectory: './test/fixtures',
-		jsonFile: 'obj.json',
-		templateData: {
-			DIR: ''
-		}
-	}, opts);
+/**
+ * A set of base directories that have been created by fixtures.  This is used
+ * by the cleanup procedure at the end of all testing.
+ * @type {Set}
+ */
+let tempDirectories = new Set();
 
-	let fixture = {
-		basedir: opts.basedir,
-		dir: '',
-		files: [],
-		obj: {},
-		data: [],
-		src: '',
-		cleanup: function () {
-			if (this.dir !== '') {
-				if (!this.dir.startsWith(this.basedir)) {
-					throw new Error(`Given ID is NOT within the unit test location: ${this.basedir}`);
-				}
 
-				fs.removeSync(this.dir);
+/** Creates an instance of a fixture */
+class Fixture {
+
+	/**
+	 * Creates an instance of a fixture object for use in a unit test.  By
+	 * default it looks lin ./test/fixtures.
+	 * @param name {string} the name of the fixture to load
+	 * @param [opts] {object} optional arguments (see README for details)
+	 * @constructor
+	 */
+	constructor(name, opts = null) {
+		opts = objectAssign({
+			basedir: currentBaseDir,
+			dataFile: 'data.list',
+			fixtureDirectory: './test/fixtures',
+			jsonFile: 'obj.json',
+			templateData: {
+				DIR: ''
 			}
-		}
-	};
+		}, opts);
 
-	if (!fs.existsSync(opts.basedir)) {
-		fs.mkdirs(opts.basedir);
-	}
+		this.opts = opts;
+		this.basedir = currentBaseDir = opts.basedir;
+		this.dir = '';
+		this.files = [];
+		this.obj = {};
+		this.data = [];
+		this.src = '';
 
-	fixture.dir = home(path.join(opts.basedir, uuidV4()));
-	if (!fs.existsSync(fixture.dir)) {
-		fs.mkdirsSync(fixture.dir);
-	}
-
-	if (name === 'tmpdir') {
-		return fixture;
-	}
-
-	fixture.src = path.resolve(path.join(opts.fixtureDirectory, name));
-	if (!fs.existsSync(fixture.src)) {
-		throw new Error(`Invalid fixture name given: ${name}`);
-	}
-
-	fs.copySync(fixture.src, fixture.dir);
-	opts.templateData.DIR = path.join(fixture.dir, path.sep);
-
-	// get the list of all files in the destination and scan them all for
-	// replacement values.
-	fixture.files = walk(fixture.dir, {nodir: true});
-	fixture.files.forEach(function (file) {
-		let inp = fs.readFileSync(file.path);
-		inp = format(inp.toString(), opts.templateData);
-		fs.writeFileSync(file.path, inp);
-
-		if (file.path === path.join(fixture.dir, opts.jsonFile)) {
-			fixture.obj = JSON.parse(inp);
+		if (!fs.existsSync(this.basedir)) {
+			fs.mkdirs(this.basedir);
+			tempDirectories.add(this.basedir);
 		}
 
-		if (file.path === path.join(fixture.dir, opts.dataFile)) {
-			fixture.data = getFileList(file.path);
+		this.dir = home(path.join(this.basedir, uuidV4()));
+		if (!fs.existsSync(this.dir)) {
+			fs.mkdirsSync(this.dir);
 		}
-	});
 
-	return fixture;
+		if (name === 'tmpdir') {
+			return this;
+		}
+
+		this.src = path.resolve(path.join(opts.fixtureDirectory, name));
+		if (!fs.existsSync(this.src)) {
+			throw new Error(`Invalid fixture name given: ${name}`);
+		}
+
+		fs.copySync(this.src, this.dir);
+		opts.templateData.DIR = path.join(this.dir, path.sep);
+
+		// get the list of all files in the destination and scan them all for
+		// replacement values.
+		this.files = walk(this.dir, {nodir: true});
+		this.files.forEach(function (file) {
+			let inp = fs.readFileSync(file.path);
+			inp = format(inp.toString(), opts.templateData);
+			fs.writeFileSync(file.path, inp);
+
+			if (file.path === path.join(this.dir, opts.jsonFile)) {
+				this.obj = JSON.parse(inp);
+			}
+
+			if (file.path === path.join(this.dir, opts.dataFile)) {
+				this.data = getFileList(file.path);
+			}
+		}, this);
+	}
+
+	/**
+	 * Returns a string representation of the internal object structure of
+	 * the Fixture.
+	 * @returns {string} the string representing the object.
+	 */
+	toString() {
+		let obj = {
+			opts: this.opts,
+			basedir: this.basedir,
+			dir: this.dir,
+			files: this.files,
+			obj: this.obj,
+			data: this.data,
+			src: this.src
+		};
+
+		return JSON.stringify(obj, null, 2);
+	}
+
+	/**
+	 * Removes the directory associated with this fixture.  This only needs to
+	 * be called one time at the end of all testing.
+	 * @return {Array} the list of directories that were removed.
+	 */
+	static cleanup() {
+		tempDirectories.forEach(directory => {
+			if (fs.existsSync(directory)) {
+				fs.removeSync(directory);
+			}
+		});
+
+		return Array.from(tempDirectories);
+	}
 }
 
 module.exports = Fixture;

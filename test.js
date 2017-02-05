@@ -8,6 +8,14 @@ const home = require('expand-home-dir');
 const Fixture = require('./index');
 
 
+test.after.always('final cleanup', t => {
+	let directories = Fixture.cleanup();
+	directories.forEach(directory => {
+		t.false(fs.existsSync(directory));
+	});
+});
+
+
 test('Copy and destroy test fixture 1', t => {
 	let fixture = new Fixture('test-fixture-1');
 
@@ -16,25 +24,6 @@ test('Copy and destroy test fixture 1', t => {
 	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory')));
 	t.true(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
 	t.is(fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString(), 'Test information\n');
-
-	fixture.cleanup();
-
-	t.false(fs.existsSync(fixture.dir));
-});
-
-
-test('Copy and destroy test fixture 1 without new', t => {
-	let fixture = Fixture('test-fixture-1');  // eslint-disable-line new-cap
-
-	t.true(fixture && typeof fixture === 'object');
-	t.true(fs.existsSync(fixture.dir));
-	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory')));
-	t.true(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
-	t.is(fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString(), 'Test information\n');
-
-	fixture.cleanup();
-
-	t.false(fs.existsSync(fixture.dir));
 });
 
 
@@ -46,8 +35,6 @@ test('Load test fixture 2', t => {
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
 	t.true(fixture.obj.testBool);
 	t.is(fixture.obj.testData, 'test data');
-
-	fixture.cleanup();
 });
 
 
@@ -64,8 +51,6 @@ test('Load test fixture 3 and perform replacement', t => {
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
 	t.true(fixture.obj.testBool);
 	t.is(fixture.obj.testData, 'test data');
-
-	fixture.cleanup();
 });
 
 
@@ -98,10 +83,6 @@ test('Load test fixture 4 and perform replacement after copy', t => {
 	let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
 
 	t.is(f, s);
-
-	fixture.cleanup();
-
-	t.false(fs.existsSync(fixture.dir));
 });
 
 
@@ -112,9 +93,7 @@ test('Change the base directory for testing and clenaup', t => {
 	});
 
 	t.true(fs.existsSync(newbasedir));
-	fixture.cleanup();
-	fs.removeSync(newbasedir);
-	t.false(fs.existsSync(newbasedir));
+	t.true(typeof fixture.toString() === 'string');
 });
 
 
@@ -123,17 +102,13 @@ test('Create temporary directory and remove', t => {
 
 	t.true(fixture && typeof fixture === 'object');
 	t.true(fs.existsSync(fixture.dir));
-
-	fixture.cleanup();
-
-	t.false(fs.existsSync(fixture.dir));
 });
 
 
 test('Bad fixture name with COPY (negative test)', t => {
 	try {
 		let fixture = new Fixture('aalksdjflaksdjflkasdj');
-		fixture.cleanup();
+		fixture.toString();
 	} catch (err) {
 		t.pass(err.message);
 	}
@@ -144,7 +119,7 @@ test('Bad basedir in tempdir (negative test)', t => {
 	try {
 		let fixture = new Fixture('test-fixture-1');
 		fixture.basedir = 'alskjfalkgjald';
-		fixture.cleanup();
+		fixture.toString();
 	} catch (err) {
 		t.pass(err.message);
 	}

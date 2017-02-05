@@ -5,6 +5,7 @@
   "description": "Test fixture library",
   "private": false,
   "license": "MIT",
+  "debug": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/jmquigley/util.fixture"
