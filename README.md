@@ -171,8 +171,9 @@ test.after.always('final cleanup', t => {
 });
 ```
 
-The cleanup function only needs to be called once.  The class keeps track of all base directories that were created and removes them when the cleanup is called.
+The cleanup function only needs to be called once per testing file.  The class keeps track of all test directories that were created and removes them when the cleanup is called.
 
+Note that when using [ava] the hook `test.after.always` is executed within each separate test file and NOT once per overall test execution.  This code needs to be part of each test file.
 
 ## API
 
@@ -187,7 +188,7 @@ This is a single constructor function exposed by the module.
 
 ##### options
 
-- `basedir {string}`: The base location where the fixture will be temporarily located. The default location is `~/.tmp/unit-test-data/`.
+- `basedir {string}`: The base location where the fixture will be temporarily located. The default location is determined by the environment variable `TMP` first or `TEMP` if TMP is not found.  If neither of these are set, then `~/.tmp/unit-test-data` is created and used within the users home directory.  This must be a directory that is writable by the user running the test.
 - `fixtureDirectory {string}`: The location within the project where fixtures are found.  The default is `./test/fixtures`.
 - `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
 - `dataFile {string}`: The name of the data list file, within the fixture location, that will be parsed and saved into `fixture.data` as an array of lines. By default this file is `data.list`.  It is parsed by the [util.filelist](https://www.npmjs.com/package/util.filelist) module.  This is a way to get a large list of information into the fixture.

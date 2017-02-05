@@ -74,5 +74,8 @@
         "as-needed"
       ]
     }
+  },
+  "ava": {
+    "concurrency": 5
   }
 }

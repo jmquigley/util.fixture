@@ -1,22 +1,30 @@
 'use strict';
 
+import test from 'ava';
+
 const path = require('path');
 const fs = require('fs-extra');
-const test = require('ava');
 const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
 const Fixture = require('./index');
 
 
-test.after.always('final cleanup', t => {
+// These must be set to empty for testing purposes.  The tests control the
+// variables for testing.
+process.env.TMP = '';
+process.env.TEMP = '';
+
+
+test.cb.after.always('final cleanup', t => {
 	let directories = Fixture.cleanup();
 	directories.forEach(directory => {
 		t.false(fs.existsSync(directory));
 	});
+	t.end();
 });
 
 
-test('Copy and destroy test fixture 1', t => {
+test.cb('Copy and destroy test fixture 1', t => {
 	let fixture = new Fixture('test-fixture-1');
 
 	t.true(fixture && typeof fixture === 'object');
@@ -24,10 +32,36 @@ test('Copy and destroy test fixture 1', t => {
 	t.true(fs.existsSync(path.join(fixture.dir, 'test-directory')));
 	t.true(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
 	t.is(fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString(), 'Test information\n');
+	t.end();
+});
+
+test.cb('Use TMP variable to set temporary location for base', t => {
+	let saveTMP = (process.env.TMP) ? process.env.TMP : '';
+	process.env.TMP = home(path.join('~/', '.tmp'));
+
+	let fixture = new Fixture('test-fixture-1');
+	t.true(fixture && typeof fixture === 'object');
+	t.true(fs.existsSync(fixture.dir));
+
+	process.env.TMP = saveTMP;
+	t.end();
 });
 
 
-test('Load test fixture 2', t => {
+test.cb('Use TEMP variable to set temporary location for base', t => {
+	let saveTEMP = (process.env.TEMP) ? process.env.TEMP : '';
+	process.env.TEMP = home(path.join('~/', '.tmp'));
+
+	let fixture = new Fixture('test-fixture-1');
+	t.true(fixture && typeof fixture === 'object');
+	t.true(fs.existsSync(fixture.dir));
+
+	process.env.TEMP = saveTEMP;
+	t.end();
+});
+
+
+test.cb('Load test fixture 2', t => {
 	let fixture = new Fixture('test-fixture-2');
 
 	t.true(fixture && typeof fixture === 'object');
@@ -35,10 +69,11 @@ test('Load test fixture 2', t => {
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
 	t.true(fixture.obj.testBool);
 	t.is(fixture.obj.testData, 'test data');
+	t.end();
 });
 
 
-test('Load test fixture 3 and perform replacement', t => {
+test.cb('Load test fixture 3 and perform replacement', t => {
 	let fixture = new Fixture('test-fixture-3', {
 		jsonFile: 'somefile.json',
 		templateData: {
@@ -51,10 +86,11 @@ test('Load test fixture 3 and perform replacement', t => {
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
 	t.true(fixture.obj.testBool);
 	t.is(fixture.obj.testData, 'test data');
+	t.end();
 });
 
 
-test('Load test fixture 4 and perform replacement after copy', t => {
+test.cb('Load test fixture 4 and perform replacement after copy', t => {
 	let fixture = new Fixture('test-fixture-4', {
 		jsonFile: 'test-directory/somefile.json',
 		dataFile: 'test-file.txt',
@@ -83,10 +119,11 @@ test('Load test fixture 4 and perform replacement after copy', t => {
 	let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
 
 	t.is(f, s);
+	t.end();
 });
 
 
-test('Change the base directory for testing and clenaup', t => {
+test.cb('Change the base directory for testing and clenaup', t => {
 	let newbasedir = home(path.join('~/', '.tmp', 'unit-test-data', uuidV4()));
 	let fixture = new Fixture('tmpdir', {
 		basedir: newbasedir
@@ -94,28 +131,33 @@ test('Change the base directory for testing and clenaup', t => {
 
 	t.true(fs.existsSync(newbasedir));
 	t.true(typeof fixture.toString() === 'string');
+
+	fs.removeSync(newbasedir);
+	t.end();
 });
 
 
-test('Create temporary directory and remove', t => {
+test.cb('Create temporary directory and remove', t => {
 	let fixture = new Fixture('tmpdir');
 
 	t.true(fixture && typeof fixture === 'object');
 	t.true(fs.existsSync(fixture.dir));
+	t.end();
 });
 
 
-test('Bad fixture name with COPY (negative test)', t => {
+test.cb('Bad fixture name with COPY (negative test)', t => {
 	try {
 		let fixture = new Fixture('aalksdjflaksdjflkasdj');
 		fixture.toString();
 	} catch (err) {
 		t.pass(err.message);
 	}
+	t.end();
 });
 
 
-test('Bad basedir in tempdir (negative test)', t => {
+test.cb('Bad basedir in tempdir (negative test)', t => {
 	try {
 		let fixture = new Fixture('test-fixture-1');
 		fixture.basedir = 'alskjfalkgjald';
@@ -123,4 +165,5 @@ test('Bad basedir in tempdir (negative test)', t => {
 	} catch (err) {
 		t.pass(err.message);
 	}
+	t.end();
 });

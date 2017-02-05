@@ -10,8 +10,6 @@ const walk = require('klaw-sync');
 const getFileList = require('util.filelist');
 
 
-let currentBaseDir = home(path.join('~/', '.tmp', 'unit-test-data'));
-
 /**
  * A set of base directories that have been created by fixtures.  This is used
  * by the cleanup procedure at the end of all testing.
@@ -32,7 +30,7 @@ class Fixture {
 	 */
 	constructor(name, opts = null) {
 		opts = objectAssign({
-			basedir: currentBaseDir,
+			basedir: setBaseDirectory(),
 			dataFile: 'data.list',
 			fixtureDirectory: './test/fixtures',
 			jsonFile: 'obj.json',
@@ -42,7 +40,7 @@ class Fixture {
 		}, opts);
 
 		this.opts = opts;
-		this.basedir = currentBaseDir = opts.basedir;
+		this.basedir = opts.basedir;
 		this.dir = '';
 		this.files = [];
 		this.obj = {};
@@ -51,12 +49,12 @@ class Fixture {
 
 		if (!fs.existsSync(this.basedir)) {
 			fs.mkdirs(this.basedir);
-			tempDirectories.add(this.basedir);
 		}
-
 		this.dir = home(path.join(this.basedir, uuidV4()));
+
 		if (!fs.existsSync(this.dir)) {
 			fs.mkdirsSync(this.dir);
+			tempDirectories.add(this.dir);
 		}
 
 		if (name === 'tmpdir') {
@@ -122,6 +120,25 @@ class Fixture {
 
 		return Array.from(tempDirectories);
 	}
+}
+
+
+/**
+ * Sets the base location for the temporariy files that this Fixture instance
+ * will use.
+ * @returns {string} the path location for the base directory
+ */
+function setBaseDirectory() {
+	let base = '';
+	if (process.env.TMP) {
+		base = process.env.TMP;
+	} else if (process.env.TEMP) {
+		base = process.env.TEMP;
+	} else {
+		base = path.join('~/', '.tmp');
+	}
+
+	return home(path.join(base, 'unit-test-data'));
 }
 
 module.exports = Fixture;
