@@ -50,7 +50,7 @@ class Fixture {
 		if (!fs.existsSync(this.basedir)) {
 			fs.mkdirs(this.basedir);
 		}
-		this.dir = home(path.join(this.basedir, uuidV4()));
+		this.dir = home(path.join(this.basedir, uuidV4(), path.sep));
 
 		if (!fs.existsSync(this.dir)) {
 			fs.mkdirsSync(this.dir);
@@ -138,7 +138,7 @@ function setBaseDirectory() {
 		base = path.join('~/', '.tmp');
 	}
 
-	return home(path.join(base, 'unit-test-data'));
+	return home(path.join(base, 'unit-test-data', path.sep));
 }
 
 module.exports = Fixture;

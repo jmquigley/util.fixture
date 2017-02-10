@@ -116,7 +116,7 @@ test.cb('Load test fixture 4 and perform replacement after copy', t => {
 	t.is(fixture.obj.testData, 'test data');
 
 	let f = fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString();
-	let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
+	let s = `Test information\n\ntest data\n\n${fixture.dir}test.txt\n`;
 
 	t.is(f, s);
 	t.end();
