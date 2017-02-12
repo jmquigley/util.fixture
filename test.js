@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
+let pkg = require('./package.json');
 const Fixture = require('./index');
 
 // These must be set to empty for testing purposes.  The tests control the
@@ -154,5 +155,16 @@ test.cb('Bad basedir in tempdir (negative test)', t => {
 	} catch (err) {
 		t.pass(err.message);
 	}
+	t.end();
+});
+
+test.cb('Create a fixture with no section in package.json', t => {
+	delete pkg.fixture;
+	let fixture = new Fixture('tmpdir', {
+		fixtureDirectory: './lib/test/fixtures'
+	});
+
+	t.true(fixture && fixture instanceof Fixture);
+	t.true(fs.existsSync(fixture.dir));
 	t.end();
 });

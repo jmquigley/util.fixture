@@ -9,7 +9,7 @@ const format = require('string-template');
 const walk = require('klaw-sync');
 const getFileList = require('util.filelist');
 
-const pkg = require('./package.json');
+const pkg = require(path.join(process.cwd(), 'package.json'));  // eslint-disable-line import/no-dynamic-require
 
 /**
  * A set of base directories that have been created by fixtures.  This is used
@@ -26,6 +26,7 @@ class Fixture {
 	 * default it looks lin ./test/fixtures.
 	 * @param name {string} the name of the fixture to load
 	 * @param [opts] {object} optional arguments (see README for details)
+	 * @param [pkg] {object} a reference to a packa
 	 * @constructor
 	 */
 	constructor(name, opts = null) {
