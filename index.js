@@ -9,6 +9,7 @@ const format = require('string-template');
 const walk = require('klaw-sync');
 const getFileList = require('util.filelist');
 
+const pkg = require('./package.json');
 
 /**
  * A set of base directories that have been created by fixtures.  This is used
@@ -16,7 +17,6 @@ const getFileList = require('util.filelist');
  * @type {Set}
  */
 let tempDirectories = new Set();
-
 
 /** Creates an instance of a fixture */
 class Fixture {
@@ -37,7 +37,7 @@ class Fixture {
 			templateData: {
 				DIR: ''
 			}
-		}, opts);
+		}, pkg.fixture, opts);
 
 		this.opts = opts;
 		this.basedir = opts.basedir;
@@ -121,7 +121,6 @@ class Fixture {
 		return Array.from(tempDirectories);
 	}
 }
-
 
 /**
  * Sets the base location for the temporariy files that this Fixture instance

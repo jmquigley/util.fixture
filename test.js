@@ -8,12 +8,10 @@ const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
 const Fixture = require('./index');
 
-
 // These must be set to empty for testing purposes.  The tests control the
 // variables for testing.
 process.env.TMP = '';
 process.env.TEMP = '';
-
 
 test.cb.after.always('final cleanup', t => {
 	let directories = Fixture.cleanup();
@@ -22,7 +20,6 @@ test.cb.after.always('final cleanup', t => {
 	});
 	t.end();
 });
-
 
 test.cb('Copy and destroy test fixture 1', t => {
 	let fixture = new Fixture('test-fixture-1');
@@ -47,7 +44,6 @@ test.cb('Use TMP variable to set temporary location for base', t => {
 	t.end();
 });
 
-
 test.cb('Use TEMP variable to set temporary location for base', t => {
 	let saveTEMP = (process.env.TEMP) ? process.env.TEMP : '';
 	process.env.TEMP = home(path.join('~/', '.tmp'));
@@ -60,7 +56,6 @@ test.cb('Use TEMP variable to set temporary location for base', t => {
 	t.end();
 });
 
-
 test.cb('Load test fixture 2', t => {
 	let fixture = new Fixture('test-fixture-2');
 
@@ -71,7 +66,6 @@ test.cb('Load test fixture 2', t => {
 	t.is(fixture.obj.testData, 'test data');
 	t.end();
 });
-
 
 test.cb('Load test fixture 3 and perform replacement', t => {
 	let fixture = new Fixture('test-fixture-3', {
@@ -88,7 +82,6 @@ test.cb('Load test fixture 3 and perform replacement', t => {
 	t.is(fixture.obj.testData, 'test data');
 	t.end();
 });
-
 
 test.cb('Load test fixture 4 and perform replacement after copy', t => {
 	let fixture = new Fixture('test-fixture-4', {
@@ -122,7 +115,6 @@ test.cb('Load test fixture 4 and perform replacement after copy', t => {
 	t.end();
 });
 
-
 test.cb('Change the base directory for testing and clenaup', t => {
 	let newbasedir = home(path.join('~/', '.tmp', 'unit-test-data', uuidV4()));
 	let fixture = new Fixture('tmpdir', {
@@ -136,7 +128,6 @@ test.cb('Change the base directory for testing and clenaup', t => {
 	t.end();
 });
 
-
 test.cb('Create temporary directory and remove', t => {
 	let fixture = new Fixture('tmpdir');
 
@@ -144,7 +135,6 @@ test.cb('Create temporary directory and remove', t => {
 	t.true(fs.existsSync(fixture.dir));
 	t.end();
 });
-
 
 test.cb('Bad fixture name with COPY (negative test)', t => {
 	try {
@@ -155,7 +145,6 @@ test.cb('Bad fixture name with COPY (negative test)', t => {
 	}
 	t.end();
 });
-
 
 test.cb('Bad basedir in tempdir (negative test)', t => {
 	try {

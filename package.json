@@ -50,19 +50,10 @@
     },
     "global": [
       "window",
-      "describe",
-      "it",
       "JSON"
     ],
     "rules": {
       "space-before-function-paren": "off",
-      "no-multiple-empty-lines": [
-        "error",
-        {
-          "max": 2,
-          "maxEOF": 1
-        }
-      ],
       "unicorn/filename-case": [
         "error",
         {
@@ -77,5 +68,10 @@
   },
   "ava": {
     "concurrency": 5
+  },
+  "fixture": {
+    "dataFile": "data.list",
+    "fixtureDirectory": "./lib/test/fixtures",
+    "jsonFile": "obj.json"
   }
 }

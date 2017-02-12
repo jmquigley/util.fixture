@@ -188,6 +188,8 @@ This is a single constructor function exposed by the module.
 
 ##### options
 
+The following options can be used to customize the fixture.  They can be set as an optional object given to the class during instantiation or within `package.json` in a section named *fixture*.  The precedence of application, from lowest to highest, is the default internal options, the `package.json`, and finally the constructor options.
+
 - `basedir {string}`: The base location where the fixture will be temporarily located. The default location is determined by the environment variable `TMP` first or `TEMP` if TMP is not found.  If neither of these are set, then `~/.tmp/unit-test-data` is created and used within the users home directory.  This must be a directory that is writable by the user running the test.
 - `fixtureDirectory {string}`: The location within the project where fixtures are found.  The default is `./test/fixtures`.
 - `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
