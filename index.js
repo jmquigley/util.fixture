@@ -29,6 +29,10 @@ class Fixture {
 	 * @constructor
 	 */
 	constructor(name, opts = null) {
+		if (!Object.prototype.hasOwnProperty.call(pkg, 'fixture')) {
+			pkg.fixture = {};
+		}
+
 		opts = objectAssign({
 			basedir: setBaseDirectory(),
 			dataFile: 'data.list',
