@@ -1,11 +1,14 @@
 node_modules/
-*.log
-*.tgz
 
 test/
-gulpfile.js
 tsconfig.json
 tslint.json
+.travis.yml
+.editorconfig
+.gitignore
+.gitattributes
 
-*.ts
+index.ts
+test.ts
+
 *.js.map
