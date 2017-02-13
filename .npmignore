@@ -10,5 +10,7 @@ tslint.json
 
 index.ts
 test.ts
+test.js
+test.d.ts
 
 *.js.map
