@@ -1,28 +1,28 @@
 'use strict';
 
-import test from 'ava';
+import {CallbackTestContext, test} from 'ava';
+import * as fs from 'fs-extra';
+import * as path from 'path';
+import {Fixture} from './index';
 
-const path = require('path');
-const fs = require('fs-extra');
 const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
 let pkg = require('./package.json');
-const Fixture = require('./index');
 
 // These must be set to empty for testing purposes.  The tests control the
 // variables for testing.
 process.env.TMP = '';
 process.env.TEMP = '';
 
-test.cb.after.always('final cleanup', t => {
-	let directories = Fixture.cleanup();
-	directories.forEach(directory => {
+test.cb.after.always('final cleanup', (t: CallbackTestContext) => {
+	let directories: string[] = Fixture.cleanup();
+	directories.forEach((directory: string) => {
 		t.false(fs.existsSync(directory));
 	});
 	t.end();
 });
 
-test.cb('Copy and destroy test fixture 1', t => {
+test.cb('Copy and destroy test fixture 1', (t: CallbackTestContext) => {
 	let fixture = new Fixture('test-fixture-1');
 
 	t.true(fixture && typeof fixture === 'object');
@@ -33,7 +33,7 @@ test.cb('Copy and destroy test fixture 1', t => {
 	t.end();
 });
 
-test.cb('Use TMP variable to set temporary location for base', t => {
+test.cb('Use TMP variable to set temporary location for base', (t: CallbackTestContext) => {
 	let saveTMP = (process.env.TMP) ? process.env.TMP : '';
 	process.env.TMP = home(path.join('~/', '.tmp'));
 
@@ -45,7 +45,7 @@ test.cb('Use TMP variable to set temporary location for base', t => {
 	t.end();
 });
 
-test.cb('Use TEMP variable to set temporary location for base', t => {
+test.cb('Use TEMP variable to set temporary location for base', (t: CallbackTestContext) => {
 	let saveTEMP = (process.env.TEMP) ? process.env.TEMP : '';
 	process.env.TEMP = home(path.join('~/', '.tmp'));
 
@@ -57,9 +57,10 @@ test.cb('Use TEMP variable to set temporary location for base', t => {
 	t.end();
 });
 
-test.cb('Load test fixture 2', t => {
+test.cb('Load test fixture 2', (t: CallbackTestContext) => {
 	let fixture = new Fixture('test-fixture-2');
 
+	console.log(fixture.obj);
 	t.true(fixture && typeof fixture === 'object');
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
@@ -68,7 +69,7 @@ test.cb('Load test fixture 2', t => {
 	t.end();
 });
 
-test.cb('Load test fixture 3 and perform replacement', t => {
+test.cb('Load test fixture 3 and perform replacement', (t: CallbackTestContext) => {
 	let fixture = new Fixture('test-fixture-3', {
 		jsonFile: 'somefile.json',
 		templateData: {
@@ -84,7 +85,7 @@ test.cb('Load test fixture 3 and perform replacement', t => {
 	t.end();
 });
 
-test.cb('Load test fixture 4 and perform replacement after copy', t => {
+test.cb('Load test fixture 4 and perform replacement after copy', (t: CallbackTestContext) => {
 	let fixture = new Fixture('test-fixture-4', {
 		jsonFile: 'test-directory/somefile.json',
 		dataFile: 'test-file.txt',
@@ -116,8 +117,8 @@ test.cb('Load test fixture 4 and perform replacement after copy', t => {
 	t.end();
 });
 
-test.cb('Change the base directory for testing and clenaup', t => {
-	let newbasedir = home(path.join('~/', '.tmp', 'unit-test-data', uuidV4()));
+test.cb('Change the base directory for testing and clenaup', (t: CallbackTestContext) => {
+	let newbasedir: string = home(path.join('~/', '.tmp', 'unit-test-data', uuidV4()));
 	let fixture = new Fixture('tmpdir', {
 		basedir: newbasedir
 	});
@@ -129,7 +130,7 @@ test.cb('Change the base directory for testing and clenaup', t => {
 	t.end();
 });
 
-test.cb('Create temporary directory and remove', t => {
+test.cb('Create temporary directory and remove', (t: CallbackTestContext) => {
 	let fixture = new Fixture('tmpdir');
 
 	t.true(fixture && typeof fixture === 'object');
@@ -137,7 +138,7 @@ test.cb('Create temporary directory and remove', t => {
 	t.end();
 });
 
-test.cb('Bad fixture name with COPY (negative test)', t => {
+test.cb('Bad fixture name with COPY (negative test)', (t: CallbackTestContext) => {
 	try {
 		let fixture = new Fixture('aalksdjflaksdjflkasdj');
 		fixture.toString();
@@ -147,7 +148,7 @@ test.cb('Bad fixture name with COPY (negative test)', t => {
 	t.end();
 });
 
-test.cb('Bad basedir in tempdir (negative test)', t => {
+test.cb('Bad basedir in tempdir (negative test)', (t: CallbackTestContext) => {
 	try {
 		let fixture = new Fixture('test-fixture-1');
 		fixture.basedir = 'alskjfalkgjald';
@@ -158,7 +159,7 @@ test.cb('Bad basedir in tempdir (negative test)', t => {
 	t.end();
 });
 
-test.cb('Create a fixture with no section in package.json', t => {
+test.cb('Create a fixture with no section in package.json', (t: CallbackTestContext) => {
 	delete pkg.fixture;
 	let fixture = new Fixture('tmpdir', {
 		fixtureDirectory: './lib/test/fixtures'
