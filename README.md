@@ -158,6 +158,15 @@ let fixture = Fixture('tmpdir');
 
 A fixture with the name `tmpdir` is a special case.  This will create a temporary directory, but will have no files or directories within it.  It will not perform any template replacements.  The directory is accessible through `fixture.dir`.
 
+A temporary directory can also be created with an empty constructor:
+
+```
+const Fixture = require('util.fixture');
+
+let fixture = Fixture();
+
+... // your test
+```
 
 #### Cleanup
 When all tests are complete the fixture should be cleaned up.  The class contains a static method named `cleanup`.  In [ava] this is used in the `test.after.always` hook:
@@ -177,13 +186,13 @@ Note that when using [ava] the hook `test.after.always` is executed within each 
 
 ## API
 
-### Fixture({name}, opts)
+### Fixture([{name}, opts])
 
 This is a single constructor function exposed by the module.
 
 ##### parameters
 
-- `name {string}`: The name of the fixture to use.  This corresponds to an entry in `./test/fixtures/{name}`.
+- `name {string}`: The name of the fixture to use.  This corresponds to an entry in `./test/fixtures/{name}`.  When this is empty an empty, temporary directory is created.
 - `opts: {object}`: optional parameters (listed below)
 
 ##### options

@@ -60,7 +60,6 @@ test.cb('Use TEMP variable to set temporary location for base', (t: CallbackTest
 test.cb('Load test fixture 2', (t: CallbackTestContext) => {
 	let fixture = new Fixture('test-fixture-2');
 
-	console.log(fixture.obj);
 	t.true(fixture && typeof fixture === 'object');
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
@@ -133,6 +132,13 @@ test.cb('Change the base directory for testing and clenaup', (t: CallbackTestCon
 test.cb('Create temporary directory and remove', (t: CallbackTestContext) => {
 	let fixture = new Fixture('tmpdir');
 
+	t.true(fixture && typeof fixture === 'object');
+	t.true(fs.existsSync(fixture.dir));
+	t.end();
+});
+
+test.cb('Create temporary directory using empty constructor', (t: CallbackTestContext) => {
+	let fixture = new Fixture();
 	t.true(fixture && typeof fixture === 'object');
 	t.true(fs.existsSync(fixture.dir));
 	t.end();

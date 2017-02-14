@@ -52,15 +52,16 @@ export class Fixture {
 	private _obj: any = {};
 	private _data: string[] = [];
 	private _src: string = '';
+	private _name: string = '';
 
 	/**
 	 * Creates an instance of a fixture object for use in a unit test.  By
 	 * default it looks lin ./test/fixtures.
-	 * @param name {string} the name of the fixture to load
+	 * @param [name] {string} the name of the fixture to load
 	 * @param [opts] {object} optional arguments (see README for details)
 	 * @constructor
 	 */
-	constructor(name: string, opts: IFixtureOpts = {}) {
+	constructor(name?: string, opts: IFixtureOpts = {}) {
 		if (!Object.prototype.hasOwnProperty.call(pkg, 'fixture')) {
 			pkg.fixture = {};
 		}
@@ -78,6 +79,7 @@ export class Fixture {
 			this._opts.templateData = {};
 		}
 
+		this._name = name || 'tmpdir';
 		this._basedir = opts.basedir || this.setBaseDirectory();
 
 		if (!fs.existsSync(this.basedir)) {
@@ -90,11 +92,11 @@ export class Fixture {
 			tempDirectories.add(this.dir);
 		}
 
-		if (name === 'tmpdir') {
+		if (this.name === 'tmpdir') {
 			return this;
 		}
 
-		this._src = path.resolve(path.join(this._opts.fixtureDirectory || './test/fixtures', name));
+		this._src = path.resolve(path.join(this._opts.fixtureDirectory || './test/fixtures', this.name));
 		if (!fs.existsSync(this.src)) {
 			throw new Error(`Invalid fixture name given: ${name}`);
 		}
@@ -164,6 +166,10 @@ export class Fixture {
 		this._basedir = val;
 	}
 
+	public get data() {
+		return this._data;
+	}
+
 	public get dir() {
 		return this._dir;
 	}
@@ -172,12 +178,12 @@ export class Fixture {
 		return this._files;
 	}
 
-	public get obj() {
-		return this._obj;
+	public get name() {
+		return this._name;
 	}
 
-	public get data() {
-		return this._data;
+	public get obj() {
+		return this._obj;
 	}
 
 	public get src() {
