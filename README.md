@@ -1,4 +1,4 @@
-# util.fixture [![Build Status](https://travis-ci.org/jmquigley/util.fixture.svg?branch=master)](https://travis-ci.org/jmquigley/util.fixture) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo) [![NPM](https://img.shields.io/npm/v/util.fixture.svg)](https://www.npmjs.com/package/util.fixture) [![Coverage Status](https://coveralls.io/repos/github/jmquigley/util.fixture/badge.svg?branch=master)](https://coveralls.io/github/jmquigley/util.fixture?branch=master)
+# util.fixture [![Build Status](https://travis-ci.org/jmquigley/util.fixture.svg?branch=master)](https://travis-ci.org/jmquigley/util.fixture) [![tslint code style](https://img.shields.io/badge/code_style-TSlint-5ed9c7.svg)](https://palantir.github.io/tslint/) [![NPM](https://img.shields.io/npm/v/util.fixture.svg)](https://www.npmjs.com/package/util.fixture) [![Coverage Status](https://coveralls.io/repos/github/jmquigley/util.fixture/badge.svg?branch=master)](https://coveralls.io/github/jmquigley/util.fixture?branch=master)
 
 > Test fixture library
 
@@ -15,6 +15,7 @@ The reason for this module is to deal with concurrency in the [ava] test runner.
 - Automatic parsing of a JSON file within the fixture
 - Parsing of a data file list
 - Can be used with concurrent test processing
+- Execution of a fixture.js script during instantiation
 
 ## Installation
 
@@ -31,7 +32,7 @@ $ npm install --save-dev util.fixture
 ## Usage
 
 #### Simple Fixture
-```
+```javascript
 const Fixture = require('util.fixture');
 
 let fixture = new Fixture('test-fixture-1');
@@ -52,7 +53,7 @@ In this example the temporary location `fixture.dir` represents the temporary di
 
 
 #### Simple JSON
-```
+```javascript
 const Fixture = require('util.fixture');
 
 let fixture = new Fixture('simple-json');
@@ -71,7 +72,7 @@ Similar to a simple fixture above.  If the fixture contains a file with the name
 
 
 #### JSON with Template Replacement
-```
+```javascript
 const Fixture = require('util.fixture');
 
 let fixture = new Fixture('some-fixture', {
@@ -85,14 +86,14 @@ let fixture = new Fixture('some-fixture', {
 
 Loads a JSON file saved in a fixture location and replaces custom text strings using template replacement.  This would search the given JSON file for all instances of the string `{replaceMe}` and substitute the given value in the template (`test data`).  An example JSON in this case would be:
 
-```
+```json
 {
 	"testData": "{replaceMe}",
 	"testBool": true
 }
 ```
 resulting in:
-```
+```json
 {
 	"testData": "test data",
 	"testBool": true
@@ -103,7 +104,7 @@ It will lead to a fixture object returned like the previous two examples.
 
 
 #### Fixture with Template Replacement
-```
+```javascript
 const Fixture = require('util.fixture');
 
 let fixture = Fixture('test-fixture', {
@@ -148,7 +149,7 @@ See [test.js](https://github.com/jmquigley/util.fixture/blob/master/test.js) in 
 
 
 #### Empty Fixture (Temporary Directory)
-```
+```javascript
 const Fixture = require('util.fixture');
 
 let fixture = Fixture('tmpdir');
@@ -160,7 +161,7 @@ A fixture with the name `tmpdir` is a special case.  This will create a temporar
 
 A temporary directory can also be created with an empty constructor:
 
-```
+```javascript
 const Fixture = require('util.fixture');
 
 let fixture = Fixture();
@@ -168,10 +169,25 @@ let fixture = Fixture();
 ... // your test
 ```
 
+#### Script Execution
+If the fixture contains a script named `fixture.js` then this script will be executed when the fixture is instantiated.  Note that this script will only work with built in node *requires* unless the fixture itself contains its own `node_modules` directory.  The script is removed from the temporary fixture after it is executed.
+
+The name of the execution script can be changed as an optional parameter to the fixture construtor:
+
+```javascript
+const Fixture = require('util.fixture');
+
+let fixture = Fixture('test-fixture', {
+	script: 'ascript.js'
+});
+
+... // your test
+```
+
 #### Cleanup
 When all tests are complete the fixture should be cleaned up.  The class contains a static method named `cleanup`.  In [ava] this is used in the `test.after.always` hook:
 
-```
+```javascript
 test.after.always('final cleanup', t => {
 	let directories = Fixture.cleanup();
 	directories.forEach(directory => {
@@ -200,10 +216,11 @@ This is a single constructor function exposed by the module.
 The following options can be used to customize the fixture.  They can be set as an optional object given to the class during instantiation or within `package.json` in a section named *fixture*.  The precedence of application, from lowest to highest, is the default internal options, the `package.json`, and finally the constructor options.
 
 - `basedir {string}`: The base location where the fixture will be temporarily located. The default location is determined by the environment variable `TMP` first or `TEMP` if TMP is not found.  If neither of these are set, then `~/.tmp/unit-test-data` is created and used within the users home directory.  This must be a directory that is writable by the user running the test.
-- `fixtureDirectory {string}`: The location within the project where fixtures are found.  The default is `./test/fixtures`.
-- `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
 - `dataFile {string}`: The name of the data list file, within the fixture location, that will be parsed and saved into `fixture.data` as an array of lines. By default this file is `data.list`.  It is parsed by the [util.filelist](https://www.npmjs.com/package/util.filelist) module.  This is a way to get a large list of information into the fixture.
+- `fixtureDirectory {string}`: The location within the project where fixtures are found.  The default is `./test/fixtures`.
 - `jsonFile {string}`: The name of a JSON data file that will be parsed and saved into `fixture.obj`.  By default this file is named `obj.json` within the fixture.
+- `script {string}`: The name of the node script that will be executed when the fixture is instantiated.  The default nam is `fixture.js`.
+- `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
 
 ##### attributes
 Instantiation of the class returns an object with the following attributes:
@@ -215,6 +232,10 @@ Instantiation of the class returns an object with the following attributes:
 - `.obj` - if the fixture contains `obj.json` or a JSON file named by the `dataFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
 - `.src` - the absolute directory path for the fixture files.
 - `.toString()` - returns a string that shows the internal representation of the fixture.  It will show all of these attributes and the options that were passed to the class when it was instantiated.
+
+##### events
+
+- `loaded` - This event fires once the constructor has finished creating the fixture.
 
 ## Template Data Variables
 The following are template variables that automatically added to the variable expansion list (templateData).

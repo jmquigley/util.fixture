@@ -1,13 +1,16 @@
 'use strict';
 
+import * as child_process from 'child_process';
+import * as events from 'events';
 import * as fs from 'fs-extra';
+import * as objectAssign from 'object-assign';
 import * as path from 'path';
+import * as format from 'string-template';
+import * as uuid from 'uuid';
 
-const uuidV4 = require('uuid/v4');
 const home = require('expand-home-dir');
-const objectAssign = require('object-assign');
-const format = require('string-template');
 const walk = require('klaw-sync');
+const chdir = require('util.chdir');
 const getFileList = require('util.filelist');
 
 const pkg = require(path.join(process.cwd(), 'package.json'));  // eslint-disable-line import/no-dynamic-require
@@ -24,11 +27,12 @@ export interface IFixtureOpts {
 	dataFile?: string;
 	fixtureDirectory?: string;
 	jsonFile?: string;
+	script?: string;
 	templateData?: {[name: string]: string};
 }
 
 /** Creates an instance of a fixture */
-export class Fixture {
+export class Fixture extends events.EventEmitter {
 
 	/**
 	 * Removes the directory associated with this fixture.  This only needs to
@@ -62,6 +66,8 @@ export class Fixture {
 	 * @constructor
 	 */
 	constructor(name?: string, opts: IFixtureOpts = {}) {
+		super();
+
 		if (!Object.prototype.hasOwnProperty.call(pkg, 'fixture')) {
 			pkg.fixture = {};
 		}
@@ -70,6 +76,7 @@ export class Fixture {
 			dataFile: 'data.list',
 			fixtureDirectory: './test/fixtures',
 			jsonFile: 'obj.json',
+			script: 'fixture.js',
 			templateDataData: {
 				DIR: ''
 			}
@@ -85,7 +92,7 @@ export class Fixture {
 		if (!fs.existsSync(this.basedir)) {
 			fs.mkdirs(this.basedir);
 		}
-		this._dir = home(path.join(this.basedir, uuidV4(), path.sep));
+		this._dir = home(path.join(this.basedir, uuid.v4(), path.sep));
 
 		if (!fs.existsSync(this.dir)) {
 			fs.mkdirsSync(this.dir);
@@ -120,6 +127,16 @@ export class Fixture {
 				this._data = getFileList(file.path);
 			}
 		}, this);
+
+		chdir.pushd(this.dir);
+		let script: string = path.join(this.dir, opts.script || 'fixture.js');
+		if (fs.existsSync(script)) {
+			child_process.execSync(`node ${script}`);
+			fs.removeSync(script);
+		}
+		chdir.popd();
+
+		this.emit('loaded');
 	}
 
 	/**
@@ -139,6 +156,7 @@ export class Fixture {
 
 		return home(path.join(base, 'unit-test-data', path.sep));
 	}
+
 	/**
 	 * Returns a string representation of the internal object structure of
 	 * the Fixture.
