@@ -29,6 +29,11 @@ To install as an application dependency with cli:
 $ npm install --save-dev util.fixture
 ```
 
+To build the app and run all tests:
+```
+$ npm run all
+```
+
 ## Usage
 
 #### Simple Fixture

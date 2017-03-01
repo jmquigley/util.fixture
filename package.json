@@ -14,46 +14,39 @@
     "url": "https://github.com/jmquigley/util.fixture/issues"
   },
   "engines": {
-    "node": ">=7.4"
+    "node": ">=7.5"
   },
   "dependencies": {
     "@types/fs-extra": "0.0.37",
-    "@types/lodash": "^4.14.52",
     "@types/node": "^7.0.5",
-    "@types/object-assign": "^4.0.30",
     "@types/string-template": "^1.0.2",
     "@types/uuid": "^2.0.29",
-    "@types/yargs": "^6.6.0",
     "expand-home-dir": "0.0.3",
     "fs-extra": "^2.0.0",
-    "klaw-sync": "^1.1.0",
-    "lodash": "^4.17.4",
-    "object-assign": "^4.1.1",
+    "klaw-sync": "^1.1.2",
     "string-template": "^1.0.0",
-    "util.chdir": "0.0.15",
-    "util.filelist": "0.0.11",
-    "util.pkgwrap": "0.0.6",
-    "util.rstrip": "0.0.7",
-    "uuid": "^3.0.1",
-    "yargs": "^6.6.0"
+    "util.chdir": "0.0.16",
+    "util.filelist": "0.0.12",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
-    "ava": "^0.18.1",
-    "coveralls": "^2.11.15",
+    "@types/mocha": "^2.2.39",
+    "coveralls": "^2.11.16",
+    "mocha": "^3.2.0",
     "nyc": "^10.1.2",
-    "tslint": "^4.4.2",
-    "typescript": "^2.1.6"
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1",
+    "util.pkgwrap": "0.0.11"
   },
   "main": "./index.js",
   "types": "./index.d.ts",
   "scripts": {
+    "all": "npm run lint && npm install && npm run build && npm test && npm run report",
     "build": "./node_modules/.bin/pkgwrap --build",
+    "coverage": "./node_modules/.bin/pkgwrap --coverage",
+    "lint": "./node_modules/.bin/pkgwrap --lint",
     "postinstall": "./node_modules/.bin/pkgwrap --postinstall",
-    "test": "./node_modules/.bin/pkgwrap --testing",
     "report": "./node_modules/.bin/pkgwrap --reporting",
-    "coverage": "./node_modules/.bin/pkgwrap --coverage"
-  },
-  "ava": {
-    "concurrency": 5
+    "test": "./node_modules/.bin/pkgwrap --testing"
   }
 }

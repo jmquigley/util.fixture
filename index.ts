@@ -3,15 +3,14 @@
 import * as child_process from 'child_process';
 import * as events from 'events';
 import * as fs from 'fs-extra';
-import * as objectAssign from 'object-assign';
 import * as path from 'path';
 import * as format from 'string-template';
+import {popd, pushd} from 'util.chdir';
+import {getFileList} from 'util.filelist';
 import * as uuid from 'uuid';
 
 const home = require('expand-home-dir');
 const walk = require('klaw-sync');
-const chdir = require('util.chdir');
-const getFileList = require('util.filelist');
 
 const pkg = require(path.join(process.cwd(), 'package.json'));  // eslint-disable-line import/no-dynamic-require
 
@@ -72,7 +71,7 @@ export class Fixture extends events.EventEmitter {
 			pkg.fixture = {};
 		}
 
-		this._opts = objectAssign({
+		this._opts = Object.assign({
 			dataFile: 'data.list',
 			fixtureDirectory: './test/fixtures',
 			jsonFile: 'obj.json',
@@ -128,13 +127,13 @@ export class Fixture extends events.EventEmitter {
 			}
 		}, this);
 
-		chdir.pushd(this.dir);
+		pushd(this.dir);
 		let script: string = path.join(this.dir, opts.script || 'fixture.js');
 		if (fs.existsSync(script)) {
 			child_process.execSync(`node ${script}`);
 			fs.removeSync(script);
 		}
-		chdir.popd();
+		popd();
 
 		this.emit('loaded');
 	}
