@@ -7,9 +7,9 @@ import * as path from 'path';
 import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
+import {expandHomeDirectory as home} from 'util.home';
 import * as uuid from 'uuid';
 
-const home = require('expand-home-dir');
 const walk = require('klaw-sync');
 
 const pkg = require(path.join(process.cwd(), 'package.json'));  // eslint-disable-line import/no-dynamic-require

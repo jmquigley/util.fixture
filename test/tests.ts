@@ -3,9 +3,9 @@
 import * as assert from 'assert';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import {expandHomeDirectory as home} from 'util.home';
 import * as uuid from 'uuid';
 import {Fixture} from '../index';
-const home = require('expand-home-dir');
 
 let pkg = require('../package.json');
 
