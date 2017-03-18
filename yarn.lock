@@ -14,7 +14,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/lodash@^4.14.53", "@types/lodash@^4.14.54":
+"@types/lodash@^4.14.53":
   version "4.14.55"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.55.tgz#75d7d4eba020ee4103d4cbd0f2a3ef5db8f7534f"
 
@@ -2237,15 +2237,12 @@ util.filelist@0.0.15:
     util.pkgwrap "0.0.17"
     util.rstrip "0.0.12"
 
-util.home@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/util.home/-/util.home-0.0.3.tgz#08007b2880cd7abd952e084998e3f381b06bb803"
+util.home@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/util.home/-/util.home-0.0.4.tgz#f15cdc8cf6e5aafbfbaf1ac6f817ea9069e76d7d"
   dependencies:
-    "@types/lodash" "^4.14.54"
-    "@types/node" "^7.0.5"
-    lodash "^4.17.4"
-    util.pkgwrap "0.0.11"
-    util.toolbox "0.0.8"
+    util.pkgwrap "0.0.17"
+    util.toolbox "0.0.12"
 
 util.pkgwrap@0.0.11:
   version "0.0.11"
@@ -2283,17 +2280,12 @@ util.rstrip@0.0.12:
     util.pkgwrap "0.0.11"
     yargs "^6.6.0"
 
-util.toolbox@0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/util.toolbox/-/util.toolbox-0.0.8.tgz#cc53ccace0ba1cd4453ff93c287285a28466b34a"
+util.toolbox@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/util.toolbox/-/util.toolbox-0.0.12.tgz#0c9ebcd9a50a55b63fb48d8ca1481a04a8adfff8"
   dependencies:
-    "@types/lodash" "^4.14.54"
-    "@types/node" "^7.0.5"
-    "@types/uuid" "^2.0.29"
-    expand-home-dir "0.0.3"
-    lodash "^4.17.4"
+    util.pkgwrap "0.0.17"
     util.rstrip "0.0.12"
-    uuid "^3.0.1"
 
 uuid@^3.0.0, uuid@^3.0.1:
   version "3.0.1"

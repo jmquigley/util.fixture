@@ -22,7 +22,7 @@
     "string-template": "^1.0.0",
     "util.chdir": "0.0.21",
     "util.filelist": "0.0.15",
-    "util.home": "0.0.3",
+    "util.home": "0.0.4",
     "util.pkgwrap": "0.0.17",
     "uuid": "^3.0.1"
   },
