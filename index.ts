@@ -108,7 +108,7 @@ export class Fixture extends events.EventEmitter {
 		if (!fs.existsSync(this.basedir)) {
 			fs.mkdirs(this.basedir);
 		}
-		this._dir = home(path.join(this.basedir, uuid.v4(), path.sep));
+		this._dir = home(path.join(this.basedir, uuid.v4()));
 
 		if (!fs.existsSync(this.dir)) {
 			fs.mkdirsSync(this.dir);
