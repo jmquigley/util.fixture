@@ -39,7 +39,9 @@
     "nyc": "^10.1.2",
     "power-assert": "^1.4.2",
     "tslint": "^4.5.1",
-    "typescript": "^2.2.1"
+    "typescript": "^2.2.1",
+    "util.toolbox": "0.0.13",
+    "util.wait": "0.0.16"
   },
   "main": "./index.js",
   "types": "./index.d.ts",

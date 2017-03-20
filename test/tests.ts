@@ -4,6 +4,7 @@ import * as assert from 'assert';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {expandHomeDirectory as home} from 'util.home';
+import {failure} from 'util.toolbox';
 import * as uuid from 'uuid';
 import {Fixture} from '../index';
 
@@ -18,10 +19,17 @@ process.env.TEMP = '';
 
 describe(path.basename(__filename), () => {
 
-	after('final cleanup', () => {
-		let directories: string[] = Fixture.cleanup();
-		directories.forEach((directory: string) => {
-			assert(!fs.existsSync(directory));
+	after('final cleanup', (done) => {
+		Fixture.cleanup((err: Error, directories: string[]) => {
+			if (err) {
+				done(failure);
+			}
+
+			directories.forEach((directory: string) => {
+				assert(!fs.existsSync(directory));
+			});
+
+			done();
 		});
 	});
 

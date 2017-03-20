@@ -8,6 +8,8 @@ import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
 import {expandHomeDirectory as home} from 'util.home';
+import {nil} from 'util.toolbox';
+import {Semaphore} from 'util.wait';
 import * as uuid from 'uuid';
 
 const walk = require('klaw-sync');
@@ -39,14 +41,28 @@ export class Fixture extends events.EventEmitter {
 	 * be called one time at the end of all testing.
 	 * @return {Array} the list of directories that were removed.
 	 */
-	public static cleanup() {
+	public static cleanup(cb: Function = nil) {
+		let semaphore = new Semaphore(30);
+
 		tempDirectories.forEach((directory: string) => {
 			if (fs.existsSync(directory)) {
-				fs.removeSync(directory);
+				semaphore.increment();
+				fs.remove(directory, (err: Error) => {
+					if (err) {
+						cb(err, null);
+					}
+					semaphore.decrement();
+				});
 			}
 		});
 
-		return Array.from(tempDirectories);
+		semaphore.wait()
+			.then(() => {
+				cb(null, Array.from(tempDirectories));
+			})
+			.catch((err: string) => {
+				cb(new Error(err), null);
+			});
 	}
 
 	private _opts: IFixtureOpts;
@@ -96,8 +112,8 @@ export class Fixture extends events.EventEmitter {
 
 		if (!fs.existsSync(this.dir)) {
 			fs.mkdirsSync(this.dir);
-			tempDirectories.add(this.dir);
 		}
+		tempDirectories.add(this.dir);
 
 		if (this.name === 'tmpdir') {
 			return this;
