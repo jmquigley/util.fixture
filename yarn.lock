@@ -2,33 +2,19 @@
 # yarn lockfile v1
 
 
-"@types/fs-extra@0.0.37":
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-0.0.37.tgz#195f11bcd9a1b97d9e412c6b66899b545471a1f7"
-  dependencies:
-    "@types/node" "*"
-
 "@types/fs-extra@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-2.0.0.tgz#1e305d412c4e9e17e5553f59f143e4a49c5573a4"
   dependencies:
     "@types/node" "*"
 
-"@types/lodash@^4.14.53":
-  version "4.14.55"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.55.tgz#75d7d4eba020ee4103d4cbd0f2a3ef5db8f7534f"
-
 "@types/mocha@^2.2.40":
   version "2.2.40"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.40.tgz#9811dd800ece544cd84b5b859917bf584a150c4c"
 
-"@types/node@*", "@types/node@^7.0.5", "@types/node@^7.0.8":
+"@types/node@*", "@types/node@^7.0.8":
   version "7.0.8"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.8.tgz#25e4dd804b630c916ae671233e6d71f6ce18124a"
-
-"@types/object-assign@^4.0.30":
-  version "4.0.30"
-  resolved "https://registry.yarnpkg.com/@types/object-assign/-/object-assign-4.0.30.tgz#8949371d5a99f4381ee0f1df0a9b7a187e07e652"
 
 "@types/string-template@^1.0.2":
   version "1.0.2"
@@ -39,10 +25,6 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-2.0.29.tgz#939a198ab73567f811ab84f670d2be9c25addd41"
   dependencies:
     "@types/node" "*"
-
-"@types/yargs@^6.6.0":
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-6.6.0.tgz#91f8e2580a8083049f78311c059aa57d6949df6b"
 
 acorn-es7-plugin@^1.0.10, acorn-es7-plugin@^1.0.12:
   version "1.1.5"
@@ -747,6 +729,10 @@ expand-brackets@^0.1.4:
 expand-home-dir@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/expand-home-dir/-/expand-home-dir-0.0.3.tgz#72de8a0486cc28a3bbd704635398825b5b62827d"
+
+"expand-home-dir@github:jmquigley/expand-home-dir":
+  version "0.0.3"
+  resolved "https://codeload.github.com/jmquigley/expand-home-dir/tar.gz/05ec8dcf0aaff75086ec79fdba28e1f85c2bf0c0"
 
 expand-range@^1.8.1:
   version "1.8.2"
@@ -1566,7 +1552,7 @@ oauth-sign@~0.8.1:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
 
-object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
+object-assign@^4.0.1, object-assign@^4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
@@ -2174,8 +2160,8 @@ typescript@^2.2.1:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.1.tgz#4862b662b988a4c8ff691cc7969622d24db76ae9"
 
 uglify-js@^2.6:
-  version "2.8.13"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.13.tgz#d0cdf02f3c661484fac601b7e723207b735a374c"
+  version "2.8.14"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.14.tgz#25b15d1af39b21752ee33703adbf432e8bc8f77d"
   dependencies:
     source-map "~0.5.1"
     uglify-to-browserify "~1.0.0"
@@ -2222,44 +2208,28 @@ url-parse-lax@^1.0.0:
   dependencies:
     prepend-http "^1.0.1"
 
-util.chdir@0.0.21:
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/util.chdir/-/util.chdir-0.0.21.tgz#61021d56a7f0f97d594c33e26e87305ac80c186e"
+util.chdir@0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/util.chdir/-/util.chdir-0.0.22.tgz#1a8f927dd72d4c0c78a4f12a3c7487e46938d632"
   dependencies:
     fs-extra "^2.1.2"
-    util.pkgwrap "0.0.17"
+    util.pkgwrap "0.0.18"
 
-util.filelist@0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/util.filelist/-/util.filelist-0.0.15.tgz#c685c1a0785eabf96715b5e93ca751a7273bfa38"
+util.filelist@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/util.filelist/-/util.filelist-0.0.16.tgz#451c582c4d16ce92f11ea0118a8d8eaa580d806a"
   dependencies:
     fs-extra "^2.1.2"
-    util.pkgwrap "0.0.17"
-    util.rstrip "0.0.12"
+    util.pkgwrap "0.0.18"
+    util.rstrip "0.0.14"
 
-util.home@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/util.home/-/util.home-0.0.4.tgz#f15cdc8cf6e5aafbfbaf1ac6f817ea9069e76d7d"
+util.home@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/util.home/-/util.home-0.0.6.tgz#f133846ab2f5f44b2264bce2cafcbed785a19597"
   dependencies:
-    util.pkgwrap "0.0.17"
-    util.toolbox "0.0.12"
-
-util.pkgwrap@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/util.pkgwrap/-/util.pkgwrap-0.0.11.tgz#168a31f3fd62d03751940980d342301637183317"
-  dependencies:
-    "@types/fs-extra" "0.0.37"
-    "@types/lodash" "^4.14.53"
-    "@types/node" "^7.0.5"
-    "@types/object-assign" "^4.0.30"
-    "@types/uuid" "^2.0.29"
-    "@types/yargs" "^6.6.0"
-    expand-home-dir "0.0.3"
-    fs-extra "^2.0.0"
-    lodash "^4.17.4"
-    object-assign "^4.1.1"
-    uuid "^3.0.1"
-    yargs "^6.5.0"
+    normalize-path "^2.0.1"
+    util.pkgwrap "0.0.18"
+    util.toolbox "0.0.13"
 
 util.pkgwrap@0.0.17:
   version "0.0.17"
@@ -2270,22 +2240,33 @@ util.pkgwrap@0.0.17:
     lodash "^4.17.4"
     yargs "^6.5.0"
 
-util.rstrip@0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/util.rstrip/-/util.rstrip-0.0.12.tgz#f251e50ffa7310c16189e74be1a0306dc9640f59"
+util.pkgwrap@0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/util.pkgwrap/-/util.pkgwrap-0.0.18.tgz#d36e85311550ac37c945eef4f92eba9c77b78e35"
   dependencies:
-    "@types/node" "^7.0.5"
-    expand-home-dir "0.0.3"
+    expand-home-dir "github:jmquigley/expand-home-dir"
     fs-extra "^2.0.0"
-    util.pkgwrap "0.0.11"
-    yargs "^6.6.0"
+    lodash "^4.17.4"
+    yargs "^6.5.0"
 
-util.toolbox@0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/util.toolbox/-/util.toolbox-0.0.12.tgz#0c9ebcd9a50a55b63fb48d8ca1481a04a8adfff8"
+util.rstrip@0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/util.rstrip/-/util.rstrip-0.0.13.tgz#ced1da3d7c24d6e8c22a4782a99d9bd0769b6487"
   dependencies:
     util.pkgwrap "0.0.17"
-    util.rstrip "0.0.12"
+
+util.rstrip@0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/util.rstrip/-/util.rstrip-0.0.14.tgz#0a4ce3d6b03b76f748dd3bc0ca2943c8b160469c"
+  dependencies:
+    util.pkgwrap "0.0.18"
+
+util.toolbox@0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/util.toolbox/-/util.toolbox-0.0.13.tgz#912eccbb3a85408538f6d26c8144d3a81d7b6b36"
+  dependencies:
+    util.pkgwrap "0.0.18"
+    util.rstrip "0.0.13"
 
 uuid@^3.0.0, uuid@^3.0.1:
   version "3.0.1"

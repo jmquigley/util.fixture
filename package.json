@@ -19,11 +19,12 @@
   "dependencies": {
     "fs-extra": "^2.1.2",
     "klaw-sync": "^1.1.2",
+    "normalize-path": "^2.0.1",
     "string-template": "^1.0.0",
-    "util.chdir": "0.0.21",
-    "util.filelist": "0.0.15",
-    "util.home": "0.0.4",
-    "util.pkgwrap": "0.0.17",
+    "util.chdir": "0.0.22",
+    "util.filelist": "0.0.16",
+    "util.home": "0.0.6",
+    "util.pkgwrap": "0.0.18",
     "uuid": "^3.0.1"
   },
   "devDependencies": {

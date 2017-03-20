@@ -7,6 +7,8 @@ import {expandHomeDirectory as home} from 'util.home';
 import * as uuid from 'uuid';
 import {Fixture} from '../index';
 
+const normalize = require('normalize-path');
+
 let pkg = require('../package.json');
 
 // These must be set to empty for testing purposes.  The tests control the
@@ -14,7 +16,7 @@ let pkg = require('../package.json');
 process.env.TMP = '';
 process.env.TEMP = '';
 
-describe('Testing util.fixture', () => {
+describe(path.basename(__filename), () => {
 
 	after('final cleanup', () => {
 		let directories: string[] = Fixture.cleanup();
@@ -101,12 +103,12 @@ describe('Testing util.fixture', () => {
 		assert.equal(fixture.data.length, 3);
 		assert.equal(fixture.data[0], 'Test information');
 		assert.equal(fixture.data[1], 'test data');
-		assert.equal(fixture.data[2], path.join(fixture.dir, 'test.txt'));
+		assert.equal(fixture.data[2], normalize(path.join(fixture.dir, 'test.txt')));
 		assert(fixture.obj.testBool);
 		assert.equal(fixture.obj.testData, 'test data');
 
 		let f = fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString();
-		let s = `Test information\n\ntest data\n\n${fixture.dir}test.txt\n`;
+		let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
 
 		assert.equal(f, s);
 	});

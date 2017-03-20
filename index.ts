@@ -11,6 +11,7 @@ import {expandHomeDirectory as home} from 'util.home';
 import * as uuid from 'uuid';
 
 const walk = require('klaw-sync');
+const normalize = require('normalize-path');
 
 const pkg = require(path.join(process.cwd(), 'package.json'));  // eslint-disable-line import/no-dynamic-require
 
@@ -108,7 +109,7 @@ export class Fixture extends events.EventEmitter {
 		}
 
 		fs.copySync(this.src, this.dir);
-		this._opts.templateData['DIR'] = path.join(this.dir, path.sep);
+		this._opts.templateData['DIR'] = `${normalize(path.join(this.dir))}/`;
 
 		// get the list of all files in the destination and scan them all for
 		// replacement values.
@@ -176,7 +177,7 @@ export class Fixture extends events.EventEmitter {
 	}
 
 	public get basedir() {
-		return this._basedir;
+		return normalize(this._basedir);
 	}
 
 	public set basedir(val) {
@@ -188,7 +189,7 @@ export class Fixture extends events.EventEmitter {
 	}
 
 	public get dir() {
-		return this._dir;
+		return normalize(this._dir);
 	}
 
 	public get files() {
@@ -204,6 +205,6 @@ export class Fixture extends events.EventEmitter {
 	}
 
 	public get src() {
-		return this._src;
+		return normalize(this._src);
 	}
 }
