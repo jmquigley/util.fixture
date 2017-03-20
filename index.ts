@@ -125,7 +125,7 @@ export class Fixture extends events.EventEmitter {
 		}
 
 		fs.copySync(this.src, this.dir);
-		this._opts.templateData['DIR'] = `${normalize(path.join(this.dir))}/`;
+		this._opts.templateData['DIR'] = normalize(path.join(this.dir));
 
 		// get the list of all files in the destination and scan them all for
 		// replacement values.

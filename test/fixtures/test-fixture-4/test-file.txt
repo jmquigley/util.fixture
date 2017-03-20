@@ -2,4 +2,4 @@ Test information
 
 {replaceMe}
 
-{DIR}{filename}
+{DIR}/{filename}

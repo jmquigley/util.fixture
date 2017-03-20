@@ -1173,8 +1173,8 @@ istanbul-lib-hook@^1.0.0:
     append-transform "^0.4.0"
 
 istanbul-lib-instrument@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/istanbul-lib-instrument/-/istanbul-lib-instrument-1.4.2.tgz#0e2fdfac93c1dabf2e31578637dc78a19089f43e"
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/istanbul-lib-instrument/-/istanbul-lib-instrument-1.5.0.tgz#0f844fd5d729f2bcb0eed5329273c581ca9a8c74"
   dependencies:
     babel-generator "^6.18.0"
     babel-template "^6.16.0"
@@ -1453,13 +1453,17 @@ mime-types@^2.1.12, mime-types@~2.1.7:
   dependencies:
     brace-expansion "^1.0.0"
 
-minimist@0.0.8, minimist@~0.0.1:
+minimist@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
 minimist@1.2.0, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
+
+minimist@~0.0.1:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
 
 mkdirp@0.5.1, mkdirp@^0.5.0, mkdirp@^0.5.1:
   version "0.5.1"
@@ -2267,6 +2271,12 @@ util.toolbox@0.0.13:
   dependencies:
     util.pkgwrap "0.0.18"
     util.rstrip "0.0.13"
+
+util.wait@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/util.wait/-/util.wait-0.0.16.tgz#1254401498b09bd0656ea81fcb72c67e271f3abe"
+  dependencies:
+    util.pkgwrap "0.0.18"
 
 uuid@^3.0.0, uuid@^3.0.1:
   version "3.0.1"
