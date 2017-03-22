@@ -15,7 +15,7 @@ import * as uuid from 'uuid';
 const walk = require('klaw-sync');
 const normalize = require('normalize-path');
 
-const pkg = require(path.join(process.cwd(), 'package.json'));  // eslint-disable-line import/no-dynamic-require
+const pkg = require(path.join(process.cwd(), 'package.json'));
 
 /**
  * A set of base directories that have been created by fixtures.  This is used

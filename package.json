@@ -23,8 +23,8 @@
     "string-template": "^1.0.0",
     "util.chdir": "0.0.22",
     "util.filelist": "0.0.16",
-    "util.home": "0.0.6",
-    "util.pkgwrap": "0.0.18",
+    "util.home": "0.0.10",
+    "util.pkgwrap": "0.0.20",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
@@ -40,8 +40,8 @@
     "power-assert": "^1.4.2",
     "tslint": "^4.5.1",
     "typescript": "^2.2.1",
-    "util.toolbox": "0.0.13",
-    "util.wait": "0.0.16"
+    "util.toolbox": "0.0.14",
+    "util.wait": "0.0.17"
   },
   "main": "./index.js",
   "types": "./index.d.ts",
