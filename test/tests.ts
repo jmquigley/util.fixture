@@ -120,6 +120,7 @@ test('Change the base directory for testing and clenaup', t => {
 	let fixture = new Fixture('tmpdir', {
 		basedir: newbasedir
 	});
+	fixture.basedir = newbasedir;
 
 	t.truthy(fixture);
 	t.true(fs.existsSync(newbasedir));
