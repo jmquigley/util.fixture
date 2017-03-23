@@ -1,14 +1,10 @@
 'use strict';
 
-import * as assert from 'assert';
+import test from 'ava';
 import * as fs from 'fs-extra';
-import * as path from 'path';
-import {expandHomeDirectory as home} from 'util.home';
-import {failure} from 'util.toolbox';
+import {join} from 'util.join';
 import * as uuid from 'uuid';
 import {Fixture} from '../index';
-
-const normalize = require('normalize-path');
 
 let pkg = require('../package.json');
 
@@ -17,167 +13,155 @@ let pkg = require('../package.json');
 process.env.TMP = '';
 process.env.TEMP = '';
 
-describe(path.basename(__filename), () => {
+test.after.always.cb(t => {
+	Fixture.cleanup((err: Error, directories: string[]) => {
+		if (err) {
+			t.fail(err.message);
+		}
 
-	after('final cleanup', (done) => {
-		Fixture.cleanup((err: Error, directories: string[]) => {
-			if (err) {
-				done(failure);
-			}
-
-			directories.forEach((directory: string) => {
-				assert(!fs.existsSync(directory));
-			});
-
-			done();
-		});
-	});
-
-	it('Copy and destroy test fixture 1', () => {
-		let fixture = new Fixture('test-fixture-1');
-
-		assert(fixture && typeof fixture === 'object');
-		assert(fs.existsSync(fixture.dir));
-		assert(fs.existsSync(path.join(fixture.dir, 'test-directory')));
-		assert(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
-		assert.equal(fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString(), 'Test information\n');
-	});
-
-	it('Use TMP variable to set temporary location for base', () => {
-		let saveTMP = (process.env.TMP) ? process.env.TMP : '';
-		process.env.TMP = home(path.join('~/', '.tmp'));
-
-		let fixture = new Fixture('test-fixture-1');
-		assert(fixture && typeof fixture === 'object');
-		assert(fs.existsSync(fixture.dir));
-
-		process.env.TMP = saveTMP;
-	});
-
-	it('Use TEMP variable to set temporary location for base', () => {
-		let saveTEMP = (process.env.TEMP) ? process.env.TEMP : '';
-		process.env.TEMP = home(path.join('~/', '.tmp'));
-
-		let fixture = new Fixture('test-fixture-1');
-		assert(fixture && typeof fixture === 'object');
-		assert(fs.existsSync(fixture.dir));
-
-		process.env.TEMP = saveTEMP;
-	});
-
-	it('Load test fixture 2', () => {
-		let fixture = new Fixture('test-fixture-2');
-
-		assert(fixture && typeof fixture === 'object');
-		assert(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
-		assert(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
-		assert(fixture.obj.testBool);
-		assert.equal(fixture.obj.testData, 'test data');
-	});
-
-	it('Load test fixture 3 and perform replacement', () => {
-		let fixture = new Fixture('test-fixture-3', {
-			jsonFile: 'somefile.json',
-			templateData: {
-				replaceMe: 'test data'
-			}
+		directories.forEach((directory: string) => {
+			t.false(fs.existsSync(directory));
 		});
 
-		assert(fixture && typeof fixture === 'object');
-		assert(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
-		assert(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
-		assert(fixture.obj.testBool);
-		assert.equal(fixture.obj.testData, 'test data');
+		t.end();
 	});
+});
 
-	it('Load test fixture 4 and perform replacement after copy', () => {
-		let fixture = new Fixture('test-fixture-4', {
-			jsonFile: 'test-directory/somefile.json',
-			dataFile: 'test-file.txt',
-			templateData: {
-				replaceMe: 'test data',
-				filename: 'test.txt'
-			}
-		});
+test('Copy and destroy test fixture 1', t => {
+	let fixture = new Fixture('test-fixture-1');
 
-		assert(fixture && typeof fixture === 'object');
-		assert(fs.existsSync(fixture.dir));
-		assert(fs.existsSync(path.join(fixture.dir, 'test-directory')));
-		assert(fs.existsSync(path.join(fixture.dir, 'test-file.txt')));
-		assert(fs.existsSync(path.join(fixture.dir, 'test-directory', 'somefile.json')));
-		assert(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
-		assert(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
-		assert(fixture.data instanceof Array);
-		assert.equal(fixture.data.length, 3);
-		assert.equal(fixture.data[0], 'Test information');
-		assert.equal(fixture.data[1], 'test data');
-		assert.equal(fixture.data[2], normalize(path.join(fixture.dir, 'test.txt')));
-		assert(fixture.obj.testBool);
-		assert.equal(fixture.obj.testData, 'test data');
+	t.truthy(fixture);
+	t.true(fs.existsSync(fixture.dir));
+	t.true(fs.existsSync(join(fixture.dir, 'test-directory')));
+	t.true(fs.existsSync(join(fixture.dir, 'test-file.txt')));
+	t.is(fs.readFileSync(join(fixture.dir, 'test-file.txt')).toString(), 'Test information\n');
+});
 
-		let f = fs.readFileSync(path.join(fixture.dir, 'test-file.txt')).toString();
-		let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
+test('Use TMP variable to set temporary location for base', t => {
+	let saveTMP = (process.env.TMP) ? process.env.TMP : '';
+	process.env.TMP = join('~/', '.tmp');
 
-		assert.equal(f, s);
-	});
+	let fixture = new Fixture('test-fixture-1');
+	t.truthy(fixture);
+	t.true(fs.existsSync(fixture.dir));
 
-	it('Change the base directory for testing and clenaup', () => {
-		let newbasedir: string = home(path.join('~/', '.tmp', 'unit-test-data', uuid.v4()));
-		let fixture = new Fixture('tmpdir', {
-			basedir: newbasedir
-		});
+	process.env.TMP = saveTMP;
+});
 
-		assert(fs.existsSync(newbasedir));
-		assert(typeof fixture.toString() === 'string');
+test('Use TEMP variable to set temporary location for base', t => {
+	let saveTEMP = (process.env.TEMP) ? process.env.TEMP : '';
+	process.env.TEMP = join('~/', '.tmp');
 
-		fs.removeSync(newbasedir);
-	});
+	let fixture = new Fixture('test-fixture-1');
+	t.truthy(fixture);
+	t.true(fs.existsSync(fixture.dir));
 
-	it('Create temporary directory and remove', () => {
-		let fixture = new Fixture('tmpdir');
+	process.env.TEMP = saveTEMP;
+});
 
-		assert(fixture && typeof fixture === 'object');
-		assert(fs.existsSync(fixture.dir));
-	});
+test('Load test fixture 2', t => {
+	let fixture = new Fixture('test-fixture-2');
 
-	it('Create temporary directory using empty constructor', () => {
-		let fixture = new Fixture();
-		assert(fixture && typeof fixture === 'object');
-		assert(fs.existsSync(fixture.dir));
-	});
+	t.truthy(fixture);
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
+	t.true(fixture.obj.testBool);
+	t.is(fixture.obj.testData, 'test data');
+});
 
-	it('Bad fixture name with COPY (negative test)', () => {
-		try {
-			let fixture = new Fixture('aalksdjflaksdjflkasdj');
-			assert(false, fixture.toString());
-		} catch (err) {
-			assert(true, err.message);
+test('Load test fixture 3 and perform replacement', t => {
+	let fixture = new Fixture('test-fixture-3', {
+		jsonFile: 'somefile.json',
+		templateData: {
+			replaceMe: 'test data'
 		}
 	});
 
-	it('Bad basedir in tempdir (negative test)', () => {
-		try {
-			let fixture = new Fixture('test-fixture-1');
-			fixture.basedir = 'alskjfalkgjald';
-			assert(false, fixture.toString());
-		} catch (err) {
-			assert(true, err.message);
+	t.truthy(fixture);
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
+	t.true(fixture.obj.testBool);
+	t.is(fixture.obj.testData, 'test data');
+});
+
+test('Load test fixture 4 and perform replacement after copy', t => {
+	let fixture = new Fixture('test-fixture-4', {
+		jsonFile: 'test-directory/somefile.json',
+		dataFile: 'test-file.txt',
+		templateData: {
+			replaceMe: 'test data',
+			filename: 'test.txt'
 		}
 	});
 
-	it('Create a fixture with no section in package.json', () => {
-		delete pkg.fixture;
-		let fixture = new Fixture('tmpdir', {
-			fixtureDirectory: './lib/test/fixtures'
-		});
+	t.truthy(fixture);
+	t.true(fs.existsSync(fixture.dir));
+	t.true(fs.existsSync(join(fixture.dir, 'test-directory')));
+	t.true(fs.existsSync(join(fixture.dir, 'test-file.txt')));
+	t.true(fs.existsSync(join(fixture.dir, 'test-directory', 'somefile.json')));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
+	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testBool'));
+	t.truthy(fixture.data instanceof Array);
+	t.is(fixture.data.length, 3);
+	t.is(fixture.data[0], 'Test information');
+	t.is(fixture.data[1], 'test data');
+	t.is(fixture.data[2], join(fixture.dir, 'test.txt'));
+	t.true(fixture.obj.testBool);
+	t.is(fixture.obj.testData, 'test data');
 
-		assert(fixture && fixture instanceof Fixture);
-		assert(fs.existsSync(fixture.dir));
+	let f = fs.readFileSync(join(fixture.dir, 'test-file.txt')).toString();
+	let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
+
+	t.is(f, s);
+});
+
+test('Change the base directory for testing and clenaup', t => {
+	let newbasedir: string = join('~/', '.tmp', 'unit-test-data', uuid.v4());
+	let fixture = new Fixture('tmpdir', {
+		basedir: newbasedir
 	});
 
-	it('Use a fixture script', () => {
-		let fixture = new Fixture('test-fixture-5');
-		assert(fixture && fixture instanceof Fixture);
-		assert(fs.existsSync(path.join(fixture.dir, 'test.out')));
+	t.truthy(fixture);
+	t.true(fs.existsSync(newbasedir));
+	t.is(typeof fixture.toString(), 'string');
+
+	fs.removeSync(newbasedir);
+});
+
+test('Create temporary directory and remove', t => {
+	let fixture = new Fixture('tmpdir');
+
+	t.truthy(fixture);
+	t.true(fs.existsSync(fixture.dir));
+});
+
+test('Create temporary directory using empty constructor', t => {
+	let fixture = new Fixture();
+	t.truthy(fixture);
+	t.true(fs.existsSync(fixture.dir));
+});
+
+test('Bad fixture name with COPY (negative test)', t => {
+	try {
+		let fixture = new Fixture('aalksdjflaksdjflkasdj');
+		t.fail(fixture.toString());
+	} catch (err) {
+		t.pass(err.message);
+	}
+});
+
+test('Create a fixture with no section in package.json', t => {
+	delete pkg.fixture;
+	let fixture = new Fixture('tmpdir', {
+		fixtureDirectory: './lib/test/fixtures'
 	});
+
+	t.truthy(fixture);
+	t.true(fs.existsSync(fixture.dir));
+});
+
+test('Use a fixture script', t => {
+	let fixture = new Fixture('test-fixture-5');
+	t.truthy(fixture);
+	t.true(fs.existsSync(join(fixture.dir, 'test.out')));
 });

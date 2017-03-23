@@ -7,15 +7,13 @@ import * as path from 'path';
 import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
-import {expandHomeDirectory as home} from 'util.home';
+import {join, normalize} from 'util.join';
 import {nil} from 'util.toolbox';
 import {Semaphore} from 'util.wait';
 import * as uuid from 'uuid';
 
 const walk = require('klaw-sync');
-const normalize = require('normalize-path');
-
-const pkg = require(path.join(process.cwd(), 'package.json'));
+const pkg = require(join(process.cwd(), 'package.json'));
 
 /**
  * A set of base directories that have been created by fixtures.  This is used
@@ -108,7 +106,7 @@ export class Fixture extends events.EventEmitter {
 		if (!fs.existsSync(this.basedir)) {
 			fs.mkdirs(this.basedir);
 		}
-		this._dir = home(path.join(this.basedir, uuid.v4()));
+		this._dir = join(this.basedir, uuid.v4());
 
 		if (!fs.existsSync(this.dir)) {
 			fs.mkdirsSync(this.dir);
@@ -119,13 +117,13 @@ export class Fixture extends events.EventEmitter {
 			return this;
 		}
 
-		this._src = path.resolve(path.join(this._opts.fixtureDirectory || './test/fixtures', this.name));
+		this._src = path.resolve(join(this._opts.fixtureDirectory || './test/fixtures', this.name));
 		if (!fs.existsSync(this.src)) {
 			throw new Error(`Invalid fixture name given: ${name}`);
 		}
 
 		fs.copySync(this.src, this.dir);
-		this._opts.templateData['DIR'] = normalize(path.join(this.dir));
+		this._opts.templateData['DIR'] = join(this.dir);
 
 		// get the list of all files in the destination and scan them all for
 		// replacement values.
@@ -135,17 +133,17 @@ export class Fixture extends events.EventEmitter {
 			inp = format(inp.toString(), this._opts.templateData);
 			fs.writeFileSync(file.path, inp);
 
-			if (file.path === path.join(this.dir, this._opts.jsonFile || 'obj.json')) {
+			if (file.path === join(this.dir, this._opts.jsonFile || 'obj.json')) {
 				this._obj = JSON.parse(inp);
 			}
 
-			if (file.path === path.join(this.dir, this._opts.dataFile || 'data.list')) {
+			if (file.path === join(this.dir, this._opts.dataFile || 'data.list')) {
 				this._data = getFileList(file.path);
 			}
 		}, this);
 
 		pushd(this.dir);
-		let script: string = path.join(this.dir, opts.script || 'fixture.js');
+		let script: string = join(this.dir, opts.script || 'fixture.js');
 		if (fs.existsSync(script)) {
 			child_process.execSync(`node ${script}`);
 			fs.removeSync(script);
@@ -167,10 +165,10 @@ export class Fixture extends events.EventEmitter {
 		} else if (process.env.TEMP) {
 			base = process.env.TEMP;
 		} else {
-			base = path.join('~/', '.tmp');
+			base = join('~/', '.tmp');
 		}
 
-		return home(path.join(base, 'unit-test-data', path.sep));
+		return join(base, 'unit-test-data', path.sep);
 	}
 
 	/**
