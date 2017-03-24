@@ -2,11 +2,11 @@
 
 > Test fixture library
 
-A testing fixture class used to simplify managing testing artifacts.  A testing fixture in this context is set of files and directories that are copied/loaded into a temporary location, named template values within the files are replaced, the fixture is used for that test, and then it is destroyed when all tests are complete.  The constructor looks for fixtures from the root of the project in `./test/fixtures`.  This directory contains a set of additional directories.  Each subdirectory represents a named fixture that can be used in a test.  e.g.  
+A testing fixture class used to simplify managing testing artifacts.  A testing fixture in this context is set of files and directories that are copied/loaded into a temporary location, named template values within the files are replaced, the fixture is used for that test, and then it is destroyed when all tests are complete.  The constructor looks for fixtures from the root of the project in `./test/fixtures`.  This directory contains a set of additional directories.  Each subdirectory represents a named fixture that can be used in a test.  e.g.
 
     ./test/fixtures/some-test
 
-This would contain a usable fixture named `some-test`.  The name of the fixture is a parameter to the function constructor.  Within these named fixture directories one can place files and directories used by a test.  See the usage section below on how to use this within a test.
+This would contain a usable fixture named `some-test`.  The name of the fixture is a parameter to the constructor.  Within these named fixture directories one can place files and directories used by a test.  See the usage section below on how to use this within a test.
 
 The reason for this module is to deal with concurrency in the [ava] test runner.  It runs tests concurrently, so using one directory for test fixtures is a problem as the tests will share artifacts incorrectly (think of two tests trying to access the same file and writing different things at the same time).  This overcomes that issue by making a separate temporary location each time a fixture is instantiated; different tests will each have their own copy of the fixture.
 
@@ -18,11 +18,6 @@ The reason for this module is to deal with concurrency in the [ava] test runner.
 - Execution of a fixture.js script during instantiation
 
 ## Installation
-
-To install as a global package and cli:
-```
-$ npm install --global util.fixture
-```
 
 To install as an application dependency with cli:
 ```
@@ -45,7 +40,7 @@ let fixture = new Fixture('test-fixture-1');
 ... // your test
 ```
 
-This will copy the contents of the named fixture `test-fixture-1` to a temporary location.  When a new fixture is created it returns an object with attributes relate to that fixture (the *attributes* are listed below).  The structure could be something like:
+This will copy the contents of the named fixture `test-fixture-1` to a temporary location.  The temporary directory location is based on the environment variables `TMP` or `TEMP`.  If neither of these are set, then the directory `~/.tmp` is chosen (and created if it doesn't exist).  This is the home directory of the user running the test.  Within this directory another directory is created named `unit-test-data`.  All test fixtures are copied to this location when used.  The name of each fixture is a geneated UUID to make them unique for each test each time it is exectued.  When a new fixture is created it returns an object with attributes related to that fixture (the *attributes* are listed below).  The structure of the fixture could be:
 
 ```
 ./test/fixtures/test-fixture-1/
@@ -54,7 +49,7 @@ This will copy the contents of the named fixture `test-fixture-1` to a temporary
         ...
 ```
 
-In this example the temporary location `fixture.dir` represents the temporary directory where the fixture was copied and expanded.  From this location one would see the structure above.  The creation of the fixture also results in template replacement.  In this example there are no custom templates variables; only builtins (see below).
+In this example the temporary location `fixture.dir` represents the temporary directory where the fixture was copied and expanded.  From this location one would see the directory/file structure above.  The creation of the fixture also results in template replacement.  In this example there are no custom templates variables; only builtins (template replacement will be explained below).
 
 
 #### Simple JSON
@@ -148,9 +143,9 @@ Test information
 test data
 ```
 
-This sample file would also be [parsed as a file list](https://www.npmjs.com/package/util.filelist).  This would read each line from the file (ignoring blank lines and # comments) and save each line into an array named `fixture.data`.
+This sample file would also be [parsed as a file list](https://www.npmjs.com/package/util.filelist).  This would read each line from the file (ignoring blank lines and # comments) and save each line into an array named `fixture.data`.  This is a way to take a large list of data, parse it, and store it into an array.
 
-See [test.js](https://github.com/jmquigley/util.fixture/blob/master/test.js) in this repository for examples of these usage patterns.
+See [tests.js](https://github.com/jmquigley/util.fixture/blob/master/test/tests.ts) in this repository for examples of these usage patterns.
 
 
 #### Empty Fixture (Temporary Directory)
@@ -174,6 +169,8 @@ let fixture = Fixture();
 ... // your test
 ```
 
+When the fixture is cleaned up this directory would be removed.
+
 #### Script Execution
 If the fixture contains a script named `fixture.js` then this script will be executed when the fixture is instantiated.  Note that this script will only work with built in node *requires* unless the fixture itself contains its own `node_modules` directory.  The script is removed from the temporary fixture after it is executed.
 
@@ -193,23 +190,30 @@ let fixture = Fixture('test-fixture', {
 When all tests are complete the fixture should be cleaned up.  The class contains a static method named `cleanup`.  In [ava] this is used in the `test.after.always` hook:
 
 ```javascript
-test.after.always('final cleanup', t => {
-	let directories = Fixture.cleanup();
-	directories.forEach(directory => {
-		t.false(fs.existsSync(directory));
-	});
+test.after.always.cb(t => {
+    Fixture.cleanup((err: Error, directories: string[]) => {
+        if (err) {
+            t.fail(err.message);
+        }
+
+        directories.forEach((directory: string) => {
+            t.false(fs.existsSync(directory));
+        });
+
+        t.end();
+    });
 });
 ```
 
-The cleanup function only needs to be called once per testing file.  The class keeps track of all test directories that were created and removes them when the cleanup is called.
+The cleanup function only needs to be called once per testing file.  The class keeps track of all test directories that were created when the Fixture is instantiated and removes them when the cleanup is called.
 
-Note that when using [ava] the hook `test.after.always` is executed within each separate test file and NOT once per overall test execution.  This code needs to be part of each test file.
+Note that when using [ava] the hook `test.after.always` is executed within each separate test file and NOT once per overall test execution.  This code needs to be part of each test file to clean up the files related to those tests.  If this is note executed, then all of the temp files created by the fixture will remain (and you will be required to clean them up).  Note that this process has intermittent issues on Windows.  It seems that the [fs-extra remove function](https://github.com/jprichardson/node-fs-extra/blob/master/docs/remove.md) will occassionaly fail when trying to delete files if Windows still has a process attached to it (like file explorer).
 
 ## API
 
 ### Fixture([{name}, opts])
 
-This is a single constructor function exposed by the module.
+This is a single constructor exposed by the module.
 
 ##### parameters
 
