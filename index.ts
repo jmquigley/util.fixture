@@ -35,9 +35,17 @@ export interface IFixtureOpts {
 export class Fixture extends events.EventEmitter {
 
 	/**
-	 * Removes the directory associated with this fixture.  This only needs to
-	 * be called one time at the end of all testing.
-	 * @return {Array} the list of directories that were removed.
+	 * Removes all of the temporary directories that were created by fixtures
+	 * in test cases.  Each fixture registers the directory it created when it
+	 * was instantiated.  This will iterate through all of those directories and
+	 * remove them.  It should be called as the last step in any testing.
+	 * @param [cb] {Function} a callback function exectued when the cleanup
+	 * procedure is complete.  The callback parameters are:
+	 *
+	 *     - err {Error}: error object if an error has occurred.  Null if no error has
+	 *       occurred.
+	 *     - directories {string[]}: a list of the directories that were removed.
+	 *
 	 */
 	public static cleanup(cb: Function = nil) {
 		let semaphore = new Semaphore(30);
