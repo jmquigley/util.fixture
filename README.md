@@ -40,7 +40,7 @@ let fixture = new Fixture('test-fixture-1');
 ... // your test
 ```
 
-This will copy the contents of the named fixture `test-fixture-1` to a temporary location.  The temporary directory location is based on the environment variables `TMP` or `TEMP`.  If neither of these are set, then the directory `~/.tmp` is chosen (and created if it doesn't exist).  This is the home directory of the user running the test.  Within this directory another directory is created named `unit-test-data`.  All test fixtures are copied to this location when used.  The name of each fixture is a geneated UUID to make them unique for each test each time it is exectued.  When a new fixture is created it returns an object with attributes related to that fixture (the *attributes* are listed below).  The structure of the fixture could be:
+This will copy the contents of the named fixture `test-fixture-1` to a temporary location.  The temporary directory location is based on the environment variables `TMP` or `TEMP`.  If neither of these are set, then the directory `~/.tmp` is chosen (and created if it doesn't exist).  This is the home directory of the user running the test.  Within this directory another directory is created named `unit-test-data`.  All test fixtures are copied to this location when used.  The name of each fixture is a generated UUID to make them unique for each test each time it is exectued.  When a new fixture is created it returns an object with attributes related to that fixture (the *attributes* are listed below).  The structure of the fixture could be:
 
 ```
 ./test/fixtures/test-fixture-1/
@@ -207,7 +207,7 @@ test.after.always.cb(t => {
 
 The cleanup function only needs to be called once per testing file.  The class keeps track of all test directories that were created when the Fixture is instantiated and removes them when the cleanup is called.
 
-Note that when using [ava] the hook `test.after.always` is executed within each separate test file and NOT once per overall test execution.  This code needs to be part of each test file to clean up the files related to those tests.  If this is note executed, then all of the temp files created by the fixture will remain (and you will be required to clean them up).  Note that this process has intermittent issues on Windows.  It seems that the [fs-extra remove function](https://github.com/jprichardson/node-fs-extra/blob/master/docs/remove.md) will occassionaly fail when trying to delete files if Windows still has a process attached to it (like file explorer).
+Note that when using [ava] the hook `test.after.always` is executed within each separate test file and NOT once per overall test execution.  This code needs to be part of each test file to clean up the files related to those tests.  If this is not executed, then all of the temp files created by the fixture will remain (and you will be required to clean them up).  Note that this process has intermittent issues on Windows.  It seems that the [fs-extra remove function](https://github.com/jprichardson/node-fs-extra/blob/master/docs/remove.md) will occassionaly fail when trying to delete files if Windows still has a process attached to it (like file explorer).
 
 ## API
 
