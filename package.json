@@ -24,20 +24,20 @@
     "util.filelist": "0.0.16",
     "util.join": "0.0.5",
     "util.pkgwrap": "0.0.20",
+    "util.toolbox": "0.0.15",
+    "util.wait": "0.0.17",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
     "@types/fs-extra": "2.0.0",
-    "@types/node": "^7.0.10",
+    "@types/node": "^7.0.12",
     "@types/string-template": "^1.0.2",
     "@types/uuid": "^2.0.29",
     "ava": "^0.18.2",
-    "coveralls": "^2.12.0",
-    "nyc": "^10.1.2",
-    "tslint": "^4.5.1",
-    "typescript": "^2.2.1",
-    "util.toolbox": "0.0.15",
-    "util.wait": "0.0.17"
+    "coveralls": "^2.13.0",
+    "nyc": "^10.2.0",
+    "tslint": "^5.0.0",
+    "typescript": "^2.2.2"
   },
   "main": "./index.js",
   "types": "./index.d.ts",

@@ -20,7 +20,7 @@ const pkg = require(join(process.cwd(), 'package.json'));
  * by the cleanup procedure at the end of all testing.
  * @type {Set}
  */
-let tempDirectories = new Set();
+const tempDirectories = new Set();
 
 export interface IFixtureOpts {
 	basedir?: string;
@@ -47,8 +47,8 @@ export class Fixture extends events.EventEmitter {
 	 *     - directories {string[]}: a list of the directories that were removed.
 	 *
 	 */
-	public static cleanup(cb: Function = nil) {
-		let semaphore = new Semaphore(30);
+	public static cleanup(cb = nil) {
+		const semaphore = new Semaphore(30);
 
 		tempDirectories.forEach((directory: string) => {
 			if (fs.existsSync(directory)) {
@@ -151,7 +151,7 @@ export class Fixture extends events.EventEmitter {
 		}, this);
 
 		pushd(this.dir);
-		let script: string = join(this.dir, opts.script || 'fixture.js');
+		const script: string = join(this.dir, opts.script || 'fixture.js');
 		if (fs.existsSync(script)) {
 			child_process.execSync(`node ${script}`);
 			fs.removeSync(script);
@@ -185,7 +185,7 @@ export class Fixture extends events.EventEmitter {
 	 * @returns {string} the string representing the object.
 	 */
 	public toString() {
-		let obj = {
+		const obj = {
 			opts: this._opts,
 			basedir: this.basedir,
 			dir: this.dir,

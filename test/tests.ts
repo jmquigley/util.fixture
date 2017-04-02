@@ -6,7 +6,7 @@ import {join} from 'util.join';
 import * as uuid from 'uuid';
 import {Fixture} from '../index';
 
-let pkg = require('../package.json');
+const pkg = require('../package.json');
 
 // These must be set to empty for testing purposes.  The tests control the
 // variables for testing.
@@ -28,7 +28,7 @@ test.after.always.cb(t => {
 });
 
 test('Copy and destroy test fixture 1', t => {
-	let fixture = new Fixture('test-fixture-1');
+	const fixture = new Fixture('test-fixture-1');
 
 	t.truthy(fixture);
 	t.true(fs.existsSync(fixture.dir));
@@ -38,10 +38,10 @@ test('Copy and destroy test fixture 1', t => {
 });
 
 test('Use TMP variable to set temporary location for base', t => {
-	let saveTMP = (process.env.TMP) ? process.env.TMP : '';
+	const saveTMP = (process.env.TMP) ? process.env.TMP : '';
 	process.env.TMP = join('~/', '.tmp');
 
-	let fixture = new Fixture('test-fixture-1');
+	const fixture = new Fixture('test-fixture-1');
 	t.truthy(fixture);
 	t.true(fs.existsSync(fixture.dir));
 
@@ -49,10 +49,10 @@ test('Use TMP variable to set temporary location for base', t => {
 });
 
 test('Use TEMP variable to set temporary location for base', t => {
-	let saveTEMP = (process.env.TEMP) ? process.env.TEMP : '';
+	const saveTEMP = (process.env.TEMP) ? process.env.TEMP : '';
 	process.env.TEMP = join('~/', '.tmp');
 
-	let fixture = new Fixture('test-fixture-1');
+	const fixture = new Fixture('test-fixture-1');
 	t.truthy(fixture);
 	t.true(fs.existsSync(fixture.dir));
 
@@ -60,7 +60,7 @@ test('Use TEMP variable to set temporary location for base', t => {
 });
 
 test('Load test fixture 2', t => {
-	let fixture = new Fixture('test-fixture-2');
+	const fixture = new Fixture('test-fixture-2');
 
 	t.truthy(fixture);
 	t.true(Object.prototype.hasOwnProperty.call(fixture.obj, 'testData'));
@@ -70,7 +70,7 @@ test('Load test fixture 2', t => {
 });
 
 test('Load test fixture 3 and perform replacement', t => {
-	let fixture = new Fixture('test-fixture-3', {
+	const fixture = new Fixture('test-fixture-3', {
 		jsonFile: 'somefile.json',
 		templateData: {
 			replaceMe: 'test data'
@@ -85,7 +85,7 @@ test('Load test fixture 3 and perform replacement', t => {
 });
 
 test('Load test fixture 4 and perform replacement after copy', t => {
-	let fixture = new Fixture('test-fixture-4', {
+	const fixture = new Fixture('test-fixture-4', {
 		jsonFile: 'test-directory/somefile.json',
 		dataFile: 'test-file.txt',
 		templateData: {
@@ -109,15 +109,15 @@ test('Load test fixture 4 and perform replacement after copy', t => {
 	t.true(fixture.obj.testBool);
 	t.is(fixture.obj.testData, 'test data');
 
-	let f = fs.readFileSync(join(fixture.dir, 'test-file.txt')).toString();
-	let s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
+	const f = fs.readFileSync(join(fixture.dir, 'test-file.txt')).toString();
+	const s = `Test information\n\ntest data\n\n${fixture.dir}/test.txt\n`;
 
 	t.is(f, s);
 });
 
 test('Change the base directory for testing and clenaup', t => {
-	let newbasedir: string = join('~/', '.tmp', 'unit-test-data', uuid.v4());
-	let fixture = new Fixture('tmpdir', {
+	const newbasedir: string = join('~/', '.tmp', 'unit-test-data', uuid.v4());
+	const fixture = new Fixture('tmpdir', {
 		basedir: newbasedir
 	});
 	fixture.basedir = newbasedir;
@@ -130,21 +130,21 @@ test('Change the base directory for testing and clenaup', t => {
 });
 
 test('Create temporary directory and remove', t => {
-	let fixture = new Fixture('tmpdir');
+	const fixture = new Fixture('tmpdir');
 
 	t.truthy(fixture);
 	t.true(fs.existsSync(fixture.dir));
 });
 
 test('Create temporary directory using empty constructor', t => {
-	let fixture = new Fixture();
+	const fixture = new Fixture();
 	t.truthy(fixture);
 	t.true(fs.existsSync(fixture.dir));
 });
 
 test('Bad fixture name with COPY (negative test)', t => {
 	try {
-		let fixture = new Fixture('aalksdjflaksdjflkasdj');
+		const fixture = new Fixture('aalksdjflaksdjflkasdj');
 		t.fail(fixture.toString());
 	} catch (err) {
 		t.pass(err.message);
@@ -153,7 +153,7 @@ test('Bad fixture name with COPY (negative test)', t => {
 
 test('Create a fixture with no section in package.json', t => {
 	delete pkg.fixture;
-	let fixture = new Fixture('tmpdir', {
+	const fixture = new Fixture('tmpdir', {
 		fixtureDirectory: './lib/test/fixtures'
 	});
 
@@ -162,7 +162,7 @@ test('Create a fixture with no section in package.json', t => {
 });
 
 test('Use a fixture script', t => {
-	let fixture = new Fixture('test-fixture-5');
+	const fixture = new Fixture('test-fixture-5');
 	t.truthy(fixture);
 	t.true(fs.existsSync(join(fixture.dir, 'test.out')));
 });
