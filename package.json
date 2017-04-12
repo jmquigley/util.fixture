@@ -24,7 +24,7 @@
     "util.filelist": "0.0.18",
     "util.join": "0.0.6",
     "util.pkgwrap": "0.0.21",
-    "util.toolbox": "0.0.21",
+    "util.toolbox": "0.0.22",
     "util.wait": "0.0.18",
     "uuid": "^3.0.1"
   },

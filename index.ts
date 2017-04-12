@@ -8,7 +8,7 @@ import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
 import {join, normalize} from 'util.join';
-import {nil, NilCallback} from 'util.toolbox';
+import {INilCallback, nil} from 'util.toolbox';
 import {Semaphore} from 'util.wait';
 import * as uuid from 'uuid';
 
@@ -31,7 +31,7 @@ export interface IFixtureOpts {
 	templateData?: {[name: string]: string};
 }
 
-export interface IFixtureCallback extends NilCallback {
+export interface IFixtureCallback extends INilCallback {
 	(err: Error | null, directories: string[] | any): void | null;
 }
 

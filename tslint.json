@@ -4,7 +4,6 @@
 		"arrow-parens": [true, "ban-single-arg-parens"],
 		"curly": true,
 		"indent": [true, "tabs"],
-		"interface-name": [true, "always-prefix"],
 		"max-line-length": false,
 		"no-console": false,
 		"no-empty": false,
