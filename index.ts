@@ -8,7 +8,7 @@ import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
 import {join, normalize} from 'util.join';
-import {nil} from 'util.toolbox';
+import {nil, NilCallback} from 'util.toolbox';
 import {Semaphore} from 'util.wait';
 import * as uuid from 'uuid';
 
@@ -31,6 +31,10 @@ export interface IFixtureOpts {
 	templateData?: {[name: string]: string};
 }
 
+export interface IFixtureCallback extends NilCallback {
+	(err: Error | null, directories: string[] | any): void | null;
+}
+
 /** Creates an instance of a fixture */
 export class Fixture extends events.EventEmitter {
 
@@ -39,7 +43,7 @@ export class Fixture extends events.EventEmitter {
 	 * in test cases.  Each fixture registers the directory it created when it
 	 * was instantiated.  This will iterate through all of those directories and
 	 * remove them.  It should be called as the last step in any testing.
-	 * @param [cb] {Function} a callback function exectued when the cleanup
+	 * @param [cb] {FixtureCallback} a callback function exectued when the cleanup
 	 * procedure is complete.  The callback parameters are:
 	 *
 	 *     - err {Error}: error object if an error has occurred.  Null if no error has
@@ -47,7 +51,7 @@ export class Fixture extends events.EventEmitter {
 	 *     - directories {string[]}: a list of the directories that were removed.
 	 *
 	 */
-	public static cleanup(cb = nil) {
+	public static cleanup(cb: IFixtureCallback = nil) {
 		const semaphore = new Semaphore(30);
 
 		tempDirectories.forEach((directory: string) => {
@@ -67,7 +71,7 @@ export class Fixture extends events.EventEmitter {
 				cb(null, Array.from(tempDirectories));
 			})
 			.catch((err: string) => {
-				cb(new Error(err), null);
+				cb(new Error(err), ['']);
 			});
 	}
 
