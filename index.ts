@@ -8,7 +8,7 @@ import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
 import {join, normalize} from 'util.join';
-import {INilCallback, nil} from 'util.toolbox';
+import {encoding, INilCallback, nil} from 'util.toolbox';
 import {Semaphore} from 'util.wait';
 import * as uuid from 'uuid';
 
@@ -163,6 +163,22 @@ export class Fixture extends events.EventEmitter {
 		popd();
 
 		this.emit('loaded');
+	}
+
+	/**
+	 * Takes a file name within the fixture, and reads the contents of the
+	 * file into a buffer and returns it.  This is the name of the relative path
+	 * and file within the fixture.
+	 * @param filename {string} the name of the file within the fixture to read.
+	 * @returns a string representing the contents of the requested file.
+	 */
+	public read(filename: string): string {
+		filename = join(this.dir, filename);
+		if (fs.existsSync(filename)) {
+			return fs.readFileSync(filename, encoding);
+		} else {
+			throw new Error(`Invalid file in fixture read: ${filename}`);
+		}
 	}
 
 	/**

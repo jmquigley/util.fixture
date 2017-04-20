@@ -166,3 +166,28 @@ test('Use a fixture script', t => {
 	t.truthy(fixture);
 	t.true(fs.existsSync(join(fixture.dir, 'test.out')));
 });
+
+test('Read a file within the fixture with read()', t => {
+	const fixture = new Fixture('test-fixture-1');
+	t.truthy(fixture);
+	t.true(fs.existsSync(join(fixture.dir, 'test-file.txt')));
+
+	const f = fixture.read('test-file.txt');
+	const s = `Test information\n`;
+
+	t.is(f, s);
+});
+
+test(`Try to use read() on a file that doesn't exist`, t => {
+	const fixture = new Fixture('test-fixture-1');
+	const filename = uuid.v4();
+	t.truthy(fixture);
+	t.false(fs.existsSync(join(fixture.dir, filename)));
+
+	try {
+		fixture.read(filename);
+		t.fail(`Shouldn't get here`);
+	} catch (err) {
+		t.is(err.message, `Invalid file in fixture read: ${join(fixture.dir, filename)}`);
+	}
+});

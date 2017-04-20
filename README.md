@@ -36,6 +36,7 @@ $ npm run all
 const Fixture = require('util.fixture');
 
 let fixture = new Fixture('test-fixture-1');
+let s = fixture.read('somefile.txt');
 
 ... // your test
 ```
@@ -50,6 +51,8 @@ This will copy the contents of the named fixture `test-fixture-1` to a temporary
 ```
 
 In this example the temporary location `fixture.dir` represents the temporary directory where the fixture was copied and expanded.  From this location one would see the directory/file structure above.  The creation of the fixture also results in template replacement.  In this example there are no custom templates variables; only builtins (template replacement will be explained below).
+
+It also shows that a file that was copied with the fixture was read into a variable as a string.
 
 
 #### Simple JSON
@@ -239,6 +242,7 @@ Instantiation of the class returns an object with the following attributes:
 - `.dir` - the location of the temporary directory created for this fixture.
 - `.files` - an array of files that were found within the fixture and placed into the temporary `.dir`.
 - `.obj` - if the fixture contains `obj.json` or a JSON file named by the `dataFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
+- `.read({filename}): string` - Reads the contents of one of the files within the fixture and returns it as a string.  The filename is a relative path within the fixture (the absolute path is resolved by the class).
 - `.src` - the absolute directory path for the fixture files.
 - `.toString()` - returns a string that shows the internal representation of the fixture.  It will show all of these attributes and the options that were passed to the class when it was instantiated.
 
