@@ -18,14 +18,14 @@
   },
   "dependencies": {
     "fs-extra": "^2.1.2",
-    "klaw-sync": "^1.1.2",
+    "klaw-sync": "^2.0.0",
     "string-template": "^1.0.0",
-    "util.chdir": "0.0.24",
-    "util.filelist": "0.0.19",
-    "util.join": "0.0.7",
+    "util.chdir": "0.0.25",
+    "util.filelist": "0.0.20",
+    "util.join": "0.0.8",
     "util.pkgwrap": "0.0.26",
-    "util.toolbox": "0.0.25",
-    "util.wait": "0.0.19",
+    "util.toolbox": "0.0.26",
+    "util.wait": "0.0.21",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
