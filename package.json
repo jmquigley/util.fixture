@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "fs-extra": "^2.1.2",
-    "klaw-sync": "^2.0.0",
+    "klaw-sync": "^2.1.0",
     "string-template": "^1.0.0",
     "util.chdir": "0.0.25",
     "util.filelist": "0.0.20",

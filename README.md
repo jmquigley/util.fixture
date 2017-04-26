@@ -52,7 +52,7 @@ This will copy the contents of the named fixture `test-fixture-1` to a temporary
 
 In this example the temporary location `fixture.dir` represents the temporary directory where the fixture was copied and expanded.  From this location one would see the directory/file structure above.  The creation of the fixture also results in template replacement.  In this example there are no custom templates variables; only builtins (template replacement will be explained below).
 
-It also shows that a file that was copied with the fixture was read into a variable as a string.
+This example also shows that a file named `somefile.txt` was read from the fixture into a temporary string variable `s` using the `read()`.
 
 
 #### Simple JSON
@@ -111,7 +111,7 @@ It will lead to a fixture object returned like the previous two examples.
 const Fixture = require('util.fixture');
 
 let fixture = Fixture('test-fixture', {
-	jsonFile: 'test-directory/somefile.json',
+    jsonFile: 'test-directory/somefile.json',
     dataFile: 'test-file.txt',
     templateData: {
         replaceMe: 'test data'
@@ -147,8 +147,6 @@ test data
 ```
 
 This sample file would also be [parsed as a file list](https://www.npmjs.com/package/util.filelist).  This would read each line from the file (ignoring blank lines and # comments) and save each line into an array named `fixture.data`.  This is a way to take a large list of data, parse it, and store it into an array.
-
-See [tests.js](https://github.com/jmquigley/util.fixture/blob/master/test/tests.ts) in this repository for examples of these usage patterns.
 
 
 #### Empty Fixture (Temporary Directory)
@@ -210,7 +208,11 @@ test.after.always.cb(t => {
 
 The cleanup function only needs to be called once per testing file.  The class keeps track of all test directories that were created when the Fixture is instantiated and removes them when the cleanup is called.
 
-Note that when using [ava] the hook `test.after.always` is executed within each separate test file and NOT once per overall test execution.  This code needs to be part of each test file to clean up the files related to those tests.  If this is not executed, then all of the temp files created by the fixture will remain (and you will be required to clean them up).  Note that this process has intermittent issues on Windows.  It seems that the [fs-extra remove function](https://github.com/jprichardson/node-fs-extra/blob/master/docs/remove.md) will occassionaly fail when trying to delete files if Windows still has a process attached to it (like file explorer).
+Note that when using [ava] the hook `test.after.always` is executed within each separate test file and NOT once per overall test execution.  This code needs to be part of each test file to clean up the files related to those tests.  If this is not executed, then all of the temp files created by the fixture will remain (and you will be required to clean them up).  Note that this process has intermittent issues on Windows.  It seems that the [fs-extra remove function](https://github.com/jprichardson/node-fs-extra/blob/master/docs/remove.md) will occasionally fail when trying to delete files if Windows still has a process attached to it (like file explorer).
+
+
+See [tests.js](https://github.com/jmquigley/util.fixture/blob/master/test/tests.ts) in this repository for examples of these usage patterns.
+
 
 ## API
 
@@ -239,10 +241,12 @@ Instantiation of the class returns an object with the following attributes:
 
 - `.basedir` - the root temporary directory for all tests.  This can be changed as an option to the function constructor
 - `.cleanup()` - static method on the class that removes the base directory and and all artifacts copied there.  Generally this would be used at the end of ALL testing.  In [ava] this would be done in the `test.after.always` function.
+- `.data` - if the fixture contains a file named `data.list` or a text file named by the `dataFile` option, then it will be processed and placed here.  This is an Array object when defined.
 - `.dir` - the location of the temporary directory created for this fixture.
 - `.files` - an array of files that were found within the fixture and placed into the temporary `.dir`.
-- `.obj` - if the fixture contains `obj.json` or a JSON file named by the `dataFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
-- `.read({filename}): string` - Reads the contents of one of the files within the fixture and returns it as a string.  The filename is a relative path within the fixture (the absolute path is resolved by the class).
+- `.name` - the name of the requested fixture.  This is the first string parameter to the Fixture constructor.
+- `.obj` - if the fixture contains `obj.json` or a JSON file named by the `jsonFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
+- `.read({filename}): string` - Reads the contents of one of the files within the fixture and returns it as a string.  The filename is a relative path within the fixture (the absolute path is resolved by the class).  This is the contents of the file after it has been processed through template replacement.
 - `.src` - the absolute directory path for the fixture files.
 - `.toString()` - returns a string that shows the internal representation of the fixture.  It will show all of these attributes and the options that were passed to the class when it was instantiated.
 
