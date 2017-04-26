@@ -1,6 +1,6 @@
 {
   "name": "util.fixture",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "author": "jmquigley <jmquigley@outlook.com>",
   "description": "Test fixture library",
   "private": false,
