@@ -4,6 +4,7 @@ import * as child_process from 'child_process';
 import * as events from 'events';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as rimraf from 'rimraf';
 import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
@@ -57,7 +58,7 @@ export class Fixture extends events.EventEmitter {
 		tempDirectories.forEach((directory: string) => {
 			if (fs.existsSync(directory)) {
 				semaphore.increment();
-				fs.remove(directory, (err: Error) => {
+				rimraf(directory, (err: Error) => {
 					if (err) {
 						cb(err, null);
 					}

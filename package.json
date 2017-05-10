@@ -17,27 +17,28 @@
     "node": ">=7.5"
   },
   "dependencies": {
-    "fs-extra": "^2.1.2",
+    "fs-extra": "^3.0.1",
     "klaw-sync": "^2.1.0",
     "string-template": "^1.0.0",
     "util.chdir": "0.0.25",
     "util.filelist": "0.0.20",
     "util.join": "0.0.8",
-    "util.pkgwrap": "0.0.26",
+    "util.pkgwrap": "0.0.27",
     "util.toolbox": "0.0.26",
     "util.wait": "0.0.21",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
-    "@types/fs-extra": "2.1.0",
-    "@types/node": "^7.0.13",
+    "@types/fs-extra": "3.0.0",
+    "@types/node": "^7.0.18",
+    "@types/rimraf": "0.0.28",
     "@types/string-template": "^1.0.2",
     "@types/uuid": "^2.0.29",
     "ava": "^0.19.1",
-    "coveralls": "^2.13.0",
-    "nyc": "^10.2.0",
-    "tslint": "^5.1.0",
-    "typescript": "^2.2.2"
+    "coveralls": "^2.13.1",
+    "nyc": "^10.3.2",
+    "tslint": "^5.2.0",
+    "typescript": "^2.3.2"
   },
   "main": "./index.js",
   "types": "./index.d.ts",
