@@ -19,14 +19,16 @@ The reason for this module is to deal with concurrency in the [ava] test runner.
 
 ## Installation
 
+This module uses [yarn](https://yarnpkg.com/en/) to manage dependencies and run scripts for development.
+
 To install as an application dependency with cli:
 ```
-$ npm install --save-dev util.fixture
+$ yarn add --dev util.fixture
 ```
 
 To build the app and run all tests:
 ```
-$ npm run all
+$ yarn run all
 ```
 
 ## Usage
