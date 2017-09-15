@@ -16,6 +16,7 @@ The reason for this module is to deal with concurrency in the [ava] test runner.
 - Parsing of a data file list
 - Can be used with concurrent test processing
 - Execution of a fixture.js script during instantiation
+- Lorem Ipsum and Pattern generators
 
 ## Installation
 
@@ -93,15 +94,15 @@ Loads a JSON file saved in a fixture location and replaces custom text strings u
 
 ```json
 {
-	"testData": "{replaceMe}",
-	"testBool": true
+    "testData": "{replaceMe}",
+    "testBool": true
 }
 ```
 resulting in:
 ```json
 {
-	"testData": "test data",
-	"testBool": true
+    "testData": "test data",
+    "testBool": true
 }
 ```
 
@@ -128,7 +129,7 @@ Loads a fixture and then searches through all of the files in that fixture for t
 ```
 ./test/fixtures/test-fixture/
     test-directory/
-       somefile.json
+        somefile.json
     test-file.txt
 ```
 
@@ -174,6 +175,41 @@ let fixture = Fixture();
 
 When the fixture is cleaned up this directory would be removed.
 
+
+#### Pattern Generator
+When the fixture is instatiated a test pattern string is created.  This string represents a 2D array of repeated chevrons.  Note that this data is stored as a newline delimited string.
+
+The default pattern is a set of chevrons of the letters `a` - `z`, where each letter is a row of 80 columns. e.g.
+
+```
+aaaaaaaaaa...
+bbbbbbbbbb...
+cccccccccc...
+...
+zzzzzzzzzz...
+```
+
+To create a default pattern use:
+
+```javascript
+const fixture = new Fixture('pattern');
+fixture.pattern; // a string representing the pattern.
+```
+
+To create a custom pattern use:
+
+```javascript
+const fixture = new Fixture('pattern', {
+    pattern: {
+        chevrons: ['0', '1', '2'],
+        columns: 80,
+        repeat: 5
+    }
+});
+```
+This will create a 15 x 80 grid of numbers, where each row is `0, 1, 2, ...` (15 rows).
+
+
 #### LoremIpsum Generator
 When the `Fixture` is instantiated it will generate a [lorem ipsum](https://en.wikipedia.org/wiki/Lorem_ipsum) string (random text).  It uses the [lorem-ipsum](https://github.com/knicklabs/lorem-ipsum.js) package to create the text.  The text is accessed through the property `.loremIpsum`.  See the package link above for configuration options.  A special name `loremIpsum` can be used if no fixture directory structure is required.
 
@@ -206,6 +242,7 @@ let fixture = Fixture('test-fixture', {
 
 ... // your test
 ```
+
 
 #### Cleanup
 When all tests are complete the fixture should be cleaned up.  The class contains a static method named `cleanup`.  In [ava] this is used in the `test.after.always` hook:
@@ -253,9 +290,10 @@ The following options can be used to customize the fixture.  They can be set as 
 - `dataFile {string}`: The name of the data list file, within the fixture location, that will be parsed and saved into `fixture.data` as an array of lines. By default this file is `data.list`.  It is parsed by the [util.filelist](https://www.npmjs.com/package/util.filelist) module.  This is a way to get a large list of information into the fixture.
 - `fixtureDirectory {string}`: The location within the project where fixtures are found.  The default is `./test/fixtures`.
 - `jsonFile {string}`: The name of a JSON data file that will be parsed and saved into `fixture.obj`.  By default this file is named `obj.json` within the fixture.
+- `pattern {object}` - configuration overrides for the pattern generator.  It contains 3 attributes: columns, repeat count, and an array of chevrons.
+- `loremIpsum {object}`: [configuration options](https://github.com/knicklabs/lorem-ipsum.js/blob/master/README.md) for the lorem ipsum generator.
 - `script {string}`: The name of the node script that will be executed when the fixture is instantiated.  The default nam is `fixture.js`.
 - `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
-- `loremIpsum {object}`: [configuration options](https://github.com/knicklabs/lorem-ipsum.js/blob/master/README.md) for the lorem ipsum generator.
 
 ##### attributes
 Instantiation of the class returns an object with the following attributes:
@@ -268,6 +306,7 @@ Instantiation of the class returns an object with the following attributes:
 - `.name` - the name of the requested fixture.  This is the first string parameter to the Fixture constructor.
 - `.loremIpsum` - a string containing a randomly generated lorem ipsum string/sentence.
 - `.obj` - if the fixture contains `obj.json` or a JSON file named by the `jsonFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
+- `.pattern` - a string contained a MxN repeating pattern.
 - `.read({filename}): string` - Reads the contents of one of the files within the fixture and returns it as a string.  The filename is a relative path within the fixture (the absolute path is resolved by the class).  This is the contents of the file after it has been processed through template replacement.
 - `.src` - the absolute directory path for the fixture files.
 - `.toString()` - returns a string that shows the internal representation of the fixture.  It will show all of these attributes and the options that were passed to the class when it was instantiated.
@@ -282,9 +321,9 @@ The following are template variables that automatically added to the variable ex
 - `DIR`: the location where the fixture will be copied.  e.g.
 
 ```
-    {
-        file: "{DIR}/somefile.txt"
-    }
+{
+    file: "{DIR}/somefile.txt"
+}
 ```
 
 [ava]: https://github.com/avajs/ava

@@ -227,3 +227,31 @@ test('Test creation of loremIpsum data with custom options', t => {
 		t.true(words.length >= 10 && words.length <= 20);
 	}
 });
+
+test('Test creation of a test pattern string', t => {
+	const fixture = new Fixture('pattern');
+
+	t.truthy(fixture);
+	t.truthy(fixture.pattern);
+	t.is(typeof fixture.pattern, 'string');
+
+	// (chevrons * columns * repeat) + newlines
+	t.is(fixture.pattern.length, (26 * 80 * 1) + 26);
+});
+
+test('Test creation of a custom test pattern string', t => {
+	const fixture = new Fixture('pattern', {
+		pattern: {
+			chevrons: ['0', '1', '2'],
+			columns: 80,
+			repeat: 5
+		}
+	});
+
+	t.truthy(fixture);
+	t.truthy(fixture.pattern);
+	t.is(typeof fixture.pattern, 'string');
+
+	// (chevrons * columns * repeat) + newlines
+	t.is(fixture.pattern.length, (3 * 80 * 5) + 15);
+});

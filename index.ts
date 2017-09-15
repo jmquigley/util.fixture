@@ -3,6 +3,7 @@
 import * as child_process from 'child_process';
 import * as events from 'events';
 import * as fs from 'fs-extra';
+import {repeat} from 'lodash';
 import * as loremIpsum from 'lorem-ipsum';
 import * as path from 'path';
 import * as rimraf from 'rimraf';
@@ -10,7 +11,7 @@ import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
 import {getFileList} from 'util.filelist';
 import {join, normalize} from 'util.join';
-import {encoding, INilCallback, nil} from 'util.toolbox';
+import {encoding, INilCallback, nil, nl} from 'util.toolbox';
 import {Semaphore} from 'util.wait';
 import * as uuid from 'uuid';
 
@@ -24,6 +25,12 @@ const pkg = require(join(process.cwd(), 'package.json'));
  */
 const tempDirectories = new Set();
 
+export interface IPatternOpts {
+	columns?: number;
+	chevrons?: string[];
+	repeat?: number;
+}
+
 export interface IFixtureOpts {
 	basedir?: string;
 	dataFile?: string;
@@ -32,6 +39,7 @@ export interface IFixtureOpts {
 	script?: string;
 	templateData?: {[name: string]: string};
 	loremIpsum?: any;
+	pattern?: IPatternOpts;
 }
 
 export interface IFixtureCallback extends INilCallback {
@@ -86,6 +94,7 @@ export class Fixture extends events.EventEmitter {
 	private _name: string = '';
 	private _obj: any = {};
 	private _opts: IFixtureOpts;
+	private _pattern: string = '';
 	private _src: string = '';
 
 	/**
@@ -110,7 +119,12 @@ export class Fixture extends events.EventEmitter {
 			templateDataData: {
 				DIR: ''
 			},
-			loremIpsum: {}
+			loremIpsum: {},
+			pattern: {
+				chevrons: [],
+				columns: 80,
+				repeat: 1
+			}
 		}, pkg.fixture, opts);
 
 		if (typeof this._opts.templateData === 'undefined') {
@@ -120,6 +134,7 @@ export class Fixture extends events.EventEmitter {
 		this._name = name || 'tmpdir';
 		this._basedir = opts.basedir || this.setBaseDirectory();
 		this._loremIpsum = loremIpsum(this._opts.loremIpsum);
+		this.patternGenerator();
 
 		if (!fs.existsSync(this.basedir)) {
 			fs.mkdirs(this.basedir);
@@ -131,7 +146,7 @@ export class Fixture extends events.EventEmitter {
 		}
 		tempDirectories.add(this.dir);
 
-		if (this.name === 'tmpdir' || this.name === 'loremIpsum') {
+		if (this.name === 'tmpdir' || this.name === 'loremIpsum' || this.name === 'pattern') {
 			return this;
 		}
 
@@ -169,6 +184,30 @@ export class Fixture extends events.EventEmitter {
 		popd();
 
 		this.emit('loaded');
+	}
+
+	/**
+	 * Generates a test pattern string.  The generated string is created from a
+	 * list of chevrons.  Each chevron is a full row of N columns.  The default
+	 * string is 26 rows with 80 columns, where each default chevron is A-Z
+	 */
+	private patternGenerator() {
+
+		const opts = this._opts.pattern;
+
+		// Set the chevrons to a-z if none given in configuration
+		if (opts.chevrons.length <= 0) {
+			for (let i = 'a'.charCodeAt(0); i <= 'z'.charCodeAt(0); i++) {
+				opts.chevrons.push(String.fromCharCode(i));
+			}
+		}
+
+		for (let i = 0; i < opts.repeat; i++) {
+			for (const chevron of opts.chevrons) {
+				this._pattern += repeat(chevron, opts.columns);
+				this._pattern += nl;
+			}
+		}
 	}
 
 	/**
@@ -254,6 +293,10 @@ export class Fixture extends events.EventEmitter {
 
 	get obj() {
 		return this._obj;
+	}
+
+	get pattern() {
+		return this._pattern;
 	}
 
 	get src() {

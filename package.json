@@ -19,6 +19,7 @@
   "dependencies": {
     "fs-extra": "^4.0.1",
     "klaw-sync": "^3.0.0",
+    "lodash": "^4.17.4",
     "lorem-ipsum": "^1.0.4",
     "string-template": "^1.0.0",
     "util.chdir": "0.0.30",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/fs-extra": "4.0.2",
+    "@types/lodash": "^4.14.74",
     "@types/lorem-ipsum": "^1.0.2",
     "@types/node": "^8.0.28",
     "@types/rimraf": "2.0.2",
