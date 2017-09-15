@@ -191,3 +191,39 @@ test(`Try to use read() on a file that doesn't exist`, t => {
 		t.is(err.message, `Invalid file in fixture read: ${join(fixture.dir, filename)}`);
 	}
 });
+
+test('Test creation of loremIpsum data with default options', t => {
+	const fixture = new Fixture('loremIpsum');
+	t.truthy(fixture);
+	t.true(typeof fixture.loremIpsum === 'string');
+
+	// one sentence
+	const sentences = fixture.loremIpsum.split('. ');
+	t.is(sentences.length, 1);
+
+	// between 5 and 15 words
+	const words = fixture.loremIpsum.split(' ');
+	t.true(words.length >= 5 && words.length <= 15);
+});
+
+test('Test creation of loremIpsum data with custom options', t => {
+	const fixture = new Fixture('loremIpsum', {
+		loremIpsum: {
+			count: 3,
+			sentenceLowerBound: 10,
+			sentenceUpperBound: 20
+		}
+	});
+	t.truthy(fixture);
+	t.true(typeof fixture.loremIpsum === 'string');
+
+	// three sentences
+	const sentences = fixture.loremIpsum.split('. ');
+	t.is(sentences.length, 3);
+
+	// each sentence between 10 and 20 words
+	for (const sentence of sentences) {
+		const words = sentence.split(' ');
+		t.true(words.length >= 10 && words.length <= 20);
+	}
+});

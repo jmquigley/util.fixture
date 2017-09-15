@@ -3,6 +3,7 @@
 import * as child_process from 'child_process';
 import * as events from 'events';
 import * as fs from 'fs-extra';
+import * as loremIpsum from 'lorem-ipsum';
 import * as path from 'path';
 import * as rimraf from 'rimraf';
 import * as format from 'string-template';
@@ -30,6 +31,7 @@ export interface IFixtureOpts {
 	jsonFile?: string;
 	script?: string;
 	templateData?: {[name: string]: string};
+	loremIpsum?: any;
 }
 
 export interface IFixtureCallback extends INilCallback {
@@ -76,14 +78,15 @@ export class Fixture extends events.EventEmitter {
 			});
 	}
 
-	private _opts: IFixtureOpts;
 	private _basedir: string = '';
 	private _dir: string = '';
-	private _files: string[] = [];
-	private _obj: any = {};
 	private _data: string[] = [];
-	private _src: string = '';
+	private _files: string[] = [];
+	private _loremIpsum: string = '';
 	private _name: string = '';
+	private _obj: any = {};
+	private _opts: IFixtureOpts;
+	private _src: string = '';
 
 	/**
 	 * Creates an instance of a fixture object for use in a unit test.  By
@@ -106,7 +109,8 @@ export class Fixture extends events.EventEmitter {
 			script: 'fixture.js',
 			templateDataData: {
 				DIR: ''
-			}
+			},
+			loremIpsum: {}
 		}, pkg.fixture, opts);
 
 		if (typeof this._opts.templateData === 'undefined') {
@@ -115,6 +119,7 @@ export class Fixture extends events.EventEmitter {
 
 		this._name = name || 'tmpdir';
 		this._basedir = opts.basedir || this.setBaseDirectory();
+		this._loremIpsum = loremIpsum(this._opts.loremIpsum);
 
 		if (!fs.existsSync(this.basedir)) {
 			fs.mkdirs(this.basedir);
@@ -126,7 +131,7 @@ export class Fixture extends events.EventEmitter {
 		}
 		tempDirectories.add(this.dir);
 
-		if (this.name === 'tmpdir') {
+		if (this.name === 'tmpdir' || this.name === 'loremIpsum') {
 			return this;
 		}
 
@@ -219,35 +224,39 @@ export class Fixture extends events.EventEmitter {
 		return JSON.stringify(obj, null, 2);
 	}
 
-	public get basedir() {
+	get basedir() {
 		return normalize(this._basedir);
 	}
 
-	public set basedir(val) {
+	set basedir(val) {
 		this._basedir = val;
 	}
 
-	public get data() {
+	get data() {
 		return this._data;
 	}
 
-	public get dir() {
+	get dir() {
 		return normalize(this._dir);
 	}
 
-	public get files() {
+	get files() {
 		return this._files;
 	}
 
-	public get name() {
+	get loremIpsum() {
+		return this._loremIpsum;
+	}
+
+	get name() {
 		return this._name;
 	}
 
-	public get obj() {
+	get obj() {
 		return this._obj;
 	}
 
-	public get src() {
+	get src() {
 		return normalize(this._src);
 	}
 }

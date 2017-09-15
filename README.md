@@ -174,6 +174,24 @@ let fixture = Fixture();
 
 When the fixture is cleaned up this directory would be removed.
 
+#### LoremIpsum Generator
+When the `Fixture` is instantiated it will generate a [lorem ipsum](https://en.wikipedia.org/wiki/Lorem_ipsum) string (random text).  It uses the [lorem-ipsum](https://github.com/knicklabs/lorem-ipsum.js) package to create the text.  The text is accessed through the property `.loremIpsum`.  See the package link above for configuration options.  A special name `loremIpsum` can be used if no fixture directory structure is required.
+
+```javascript
+const fixture = new Fixture('loremIpsum', {
+    loremIpsum: {
+        count: 3,
+        sentenceLowerBound: 10,
+        sentenceUpperBound: 20
+    }
+});
+
+fixture.loremIpsum;
+```
+
+The fixture above generates a custom lorem ipsum string with 3 sentences where each sentence has between 10 and 20 words.
+
+
 #### Script Execution
 If the fixture contains a script named `fixture.js` then this script will be executed when the fixture is instantiated.  Note that this script will only work with built in node *requires* unless the fixture itself contains its own `node_modules` directory.  The script is removed from the temporary fixture after it is executed.
 
@@ -237,6 +255,7 @@ The following options can be used to customize the fixture.  They can be set as 
 - `jsonFile {string}`: The name of a JSON data file that will be parsed and saved into `fixture.obj`.  By default this file is named `obj.json` within the fixture.
 - `script {string}`: The name of the node script that will be executed when the fixture is instantiated.  The default nam is `fixture.js`.
 - `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
+- `loremIpsum {object}`: [configuration options](https://github.com/knicklabs/lorem-ipsum.js/blob/master/README.md) for the lorem ipsum generator.
 
 ##### attributes
 Instantiation of the class returns an object with the following attributes:
@@ -247,6 +266,7 @@ Instantiation of the class returns an object with the following attributes:
 - `.dir` - the location of the temporary directory created for this fixture.
 - `.files` - an array of files that were found within the fixture and placed into the temporary `.dir`.
 - `.name` - the name of the requested fixture.  This is the first string parameter to the Fixture constructor.
+- `.loremIpsum` - a string containing a randomly generated lorem ipsum string/sentence.
 - `.obj` - if the fixture contains `obj.json` or a JSON file named by the `jsonFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
 - `.read({filename}): string` - Reads the contents of one of the files within the fixture and returns it as a string.  The filename is a relative path within the fixture (the absolute path is resolved by the class).  This is the contents of the file after it has been processed through template replacement.
 - `.src` - the absolute directory path for the fixture files.
