@@ -9,9 +9,10 @@ import * as path from 'path';
 import * as rimraf from 'rimraf';
 import * as format from 'string-template';
 import {popd, pushd} from 'util.chdir';
+import {nl} from 'util.constants';
 import {getFileList} from 'util.filelist';
 import {join, normalize} from 'util.join';
-import {encoding, INilCallback, nil, nl} from 'util.toolbox';
+import {encoding, INilCallback, nil} from 'util.toolbox';
 import {Semaphore} from 'util.wait';
 import * as uuid from 'uuid';
 
