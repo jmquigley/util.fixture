@@ -1,6 +1,6 @@
 {
   "name": "util.fixture",
-  "version": "0.0.60",
+  "version": "0.0.61",
   "author": "jmquigley <jmquigley@outlook.com>",
   "description": "Test fixture library",
   "main": "./index.js",
