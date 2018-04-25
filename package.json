@@ -21,23 +21,23 @@
   "dependencies": {
     "fs-extra": "^5.0.0",
     "klaw-sync": "^3.0.2",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.10",
     "lorem-ipsum": "^1.0.4",
     "rimraf": "^2.6.2",
     "string-template": "^1.0.0",
-    "util.chdir": "0.0.34",
-    "util.constants": "^0.0.9",
-    "util.filelist": "0.0.28",
-    "util.join": "0.0.18",
-    "util.toolbox": "0.0.58",
-    "util.wait": "0.0.31",
+    "util.chdir": "0.0.35",
+    "util.constants": "^0.0.10",
+    "util.filelist": "0.0.29",
+    "util.join": "0.0.19",
+    "util.toolbox": "0.0.59",
+    "util.wait": "0.0.32",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
     "@types/fs-extra": "5.0.2",
-    "@types/lodash": "^4.14.107",
+    "@types/lodash": "^4.14.108",
     "@types/lorem-ipsum": "^1.0.2",
-    "@types/node": "^8.10.9",
+    "@types/node": "^9.6.6",
     "@types/rimraf": "^2.0.2",
     "@types/string-template": "^1.0.2",
     "@types/uuid": "^3.4.3",
@@ -45,8 +45,8 @@
     "coveralls": "^3.0.0",
     "nyc": "^11.7.1",
     "tslint": "^5.9.1",
-    "typescript": "^2.8.1",
-    "util.pkgwrap": "^0.0.90"
+    "typescript": "^2.8.3",
+    "util.pkgwrap": "^0.0.91"
   },
   "scripts": {
     "all": "yarn install && yarn run build && yarn test && yarn run report",
