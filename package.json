@@ -19,43 +19,71 @@
     "node": ">=7.5"
   },
   "dependencies": {
-    "fs-extra": "^5.0.0",
-    "klaw-sync": "^3.0.2",
-    "lodash": "^4.17.10",
-    "lorem-ipsum": "^1.0.4",
-    "rimraf": "^2.6.2",
+    "fs-extra": "^7.0.1",
+    "klaw-sync": "^6.0.0",
+    "lodash": "^4.17.11",
+    "lorem-ipsum": "^1.0.6",
+    "rimraf": "^2.6.3",
     "string-template": "^1.0.0",
-    "util.chdir": "0.0.35",
-    "util.constants": "^0.0.10",
-    "util.filelist": "0.0.29",
-    "util.join": "0.0.19",
-    "util.toolbox": "0.0.59",
-    "util.wait": "0.0.32",
-    "uuid": "^3.2.1"
+    "util.chdir": "0.0.37",
+    "util.constants": "^0.0.16",
+    "util.filelist": "0.0.32",
+    "util.join": "0.0.21",
+    "util.toolbox": "0.0.68",
+    "util.wait": "0.0.33",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@types/fs-extra": "5.0.2",
-    "@types/lodash": "^4.14.108",
+    "@types/fs-extra": "5.0.4",
+    "@types/lodash": "^4.14.119",
     "@types/lorem-ipsum": "^1.0.2",
-    "@types/node": "^9.6.6",
+    "@types/node": "^10.12.18",
     "@types/rimraf": "^2.0.2",
     "@types/string-template": "^1.0.2",
-    "@types/uuid": "^3.4.3",
-    "ava": "^0.25.0",
-    "coveralls": "^3.0.0",
-    "nyc": "^11.7.1",
-    "tslint": "^5.9.1",
-    "typescript": "^2.8.3",
-    "util.pkgwrap": "^0.0.91"
+    "@types/uuid": "^3.4.4",
+    "coveralls": "^3.0.2",
+    "jest": "^23.6.0",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2",
+    "typescript-babel-jest": "^1.0.5",
+    "util.pkgwrap": "^0.0.94"
+  },
+  "pkgwrap": {
+    "cleanup": [
+      "index.d.ts",
+      "index.js"
+    ]
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "json"
+    ],
+    "notify": false,
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "__tests__/helpers"
+    ],
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "transform": {
+      "^.+\\.ts?$": "typescript-babel-jest"
+    },
+    "verbose": false
   },
   "scripts": {
-    "all": "yarn install && yarn run build && yarn test && yarn run report",
+    "all": "yarn install && yarn run build && yarn test",
     "build": "yarn clean && yarn run lint && pkgwrap --build",
     "clean": "pkgwrap --clean",
-    "coverage": "pkgwrap --coverage",
+    "coverage": "pkgwrap --coverage --jest",
     "lint": "pkgwrap --lint",
     "prepublishOnly": "yarn run all",
-    "report": "pkgwrap --reporting",
-    "test": "pkgwrap --testing --ava"
+    "test": "pkgwrap --testing --jest"
   }
 }

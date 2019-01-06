@@ -114,7 +114,7 @@ export class Fixture extends events.EventEmitter {
 
 		this._opts = Object.assign({
 			dataFile: 'data.list',
-			fixtureDirectory: './test/fixtures',
+			fixtureDirectory: './__tests__/fixtures',
 			jsonFile: 'obj.json',
 			script: 'fixture.js',
 			templateDataData: {
@@ -151,7 +151,7 @@ export class Fixture extends events.EventEmitter {
 			return this;
 		}
 
-		this._src = path.resolve(join(this._opts.fixtureDirectory || './test/fixtures', this.name));
+		this._src = path.resolve(join(this._opts.fixtureDirectory || './__tests__/fixtures', this.name));
 		if (!fs.existsSync(this.src)) {
 			throw new Error(`Invalid fixture name given: ${name}`);
 		}
