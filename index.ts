@@ -1,23 +1,23 @@
-'use strict';
+"use strict";
 
-import * as child_process from 'child_process';
-import * as events from 'events';
-import * as fs from 'fs-extra';
-import {repeat} from 'lodash';
-import * as loremIpsum from 'lorem-ipsum';
-import * as path from 'path';
-import * as rimraf from 'rimraf';
-import * as format from 'string-template';
-import {popd, pushd} from 'util.chdir';
-import {nl} from 'util.constants';
-import {getFileList} from 'util.filelist';
-import {join, normalize} from 'util.join';
-import {encoding, INilCallback, nil} from 'util.toolbox';
-import {Semaphore} from 'util.wait';
-import * as uuid from 'uuid';
+import * as child_process from "child_process";
+import * as events from "events";
+import * as fs from "fs-extra";
+import {repeat} from "lodash";
+import * as loremIpsum from "lorem-ipsum";
+import * as path from "path";
+import * as rimraf from "rimraf";
+import * as format from "string-template";
+import {popd, pushd} from "util.chdir";
+import {nl} from "util.constants";
+import {getFileList} from "util.filelist";
+import {join, normalize} from "util.join";
+import {encoding, nil, NilCallback} from "util.toolbox";
+import {Semaphore} from "util.wait";
+import * as uuid from "uuid";
 
-const walk = require('klaw-sync');
-const pkg = require(join(process.cwd(), 'package.json'));
+const walk = require("klaw-sync");
+const pkg = require(join(process.cwd(), "package.json"));
 
 /**
  * A set of base directories that have been created by fixtures.  This is used
@@ -26,13 +26,13 @@ const pkg = require(join(process.cwd(), 'package.json'));
  */
 const tempDirectories = new Set();
 
-export interface IPatternOpts {
+export interface PatternOpts {
 	columns?: number;
 	chevrons?: string[];
 	repeat?: number;
 }
 
-export interface IFixtureOpts {
+export interface FixtureOpts {
 	basedir?: string;
 	dataFile?: string;
 	fixtureDirectory?: string;
@@ -40,16 +40,15 @@ export interface IFixtureOpts {
 	script?: string;
 	templateData?: {[name: string]: string};
 	loremIpsum?: any;
-	pattern?: IPatternOpts;
+	pattern?: PatternOpts;
 }
 
-export interface IFixtureCallback extends INilCallback {
+export interface FixtureCallback extends NilCallback {
 	(err: Error | null, directories: string[] | any): void | null;
 }
 
 /** Creates an instance of a fixture */
 export class Fixture extends events.EventEmitter {
-
 	/**
 	 * Removes all of the temporary directories that were created by fixtures
 	 * in test cases.  Each fixture registers the directory it created when it
@@ -63,7 +62,7 @@ export class Fixture extends events.EventEmitter {
 	 *     - directories {string[]}: a list of the directories that were removed.
 	 *
 	 */
-	public static cleanup(cb: IFixtureCallback = nil) {
+	public static cleanup(cb: FixtureCallback = nil) {
 		const semaphore = new Semaphore(30);
 
 		tempDirectories.forEach((directory: string) => {
@@ -78,25 +77,26 @@ export class Fixture extends events.EventEmitter {
 			}
 		});
 
-		semaphore.wait()
+		semaphore
+			.wait()
 			.then(() => {
 				cb(null, Array.from(tempDirectories));
 			})
 			.catch((err: string) => {
-				cb(new Error(err), ['']);
+				cb(new Error(err), [""]);
 			});
 	}
 
-	private _basedir: string = '';
-	private _dir: string = '';
+	private _basedir: string = "";
+	private _dir: string = "";
 	private _data: string[] = [];
 	private _files: string[] = [];
-	private _loremIpsum: string = '';
-	private _name: string = '';
+	private _loremIpsum: string = "";
+	private _name: string = "";
 	private _obj: any = {};
-	private _opts: IFixtureOpts;
-	private _pattern: string = '';
-	private _src: string = '';
+	private _opts: FixtureOpts;
+	private _pattern: string = "";
+	private _src: string = "";
 
 	/**
 	 * Creates an instance of a fixture object for use in a unit test.  By
@@ -105,34 +105,38 @@ export class Fixture extends events.EventEmitter {
 	 * @param [opts] {object} optional arguments (see README for details)
 	 * @constructor
 	 */
-	constructor(name?: string, opts: IFixtureOpts = {}) {
+	constructor(name?: string, opts: FixtureOpts = {}) {
 		super();
 
-		if (!Object.prototype.hasOwnProperty.call(pkg, 'fixture')) {
+		if (!Object.prototype.hasOwnProperty.call(pkg, "fixture")) {
 			pkg.fixture = {};
 		}
 
-		this._opts = Object.assign({
-			dataFile: 'data.list',
-			fixtureDirectory: './__tests__/fixtures',
-			jsonFile: 'obj.json',
-			script: 'fixture.js',
-			templateDataData: {
-				DIR: ''
+		this._opts = Object.assign(
+			{
+				dataFile: "data.list",
+				fixtureDirectory: "./__tests__/fixtures",
+				jsonFile: "obj.json",
+				script: "fixture.js",
+				templateDataData: {
+					DIR: ""
+				},
+				loremIpsum: {},
+				pattern: {
+					chevrons: [],
+					columns: 80,
+					repeat: 1
+				}
 			},
-			loremIpsum: {},
-			pattern: {
-				chevrons: [],
-				columns: 80,
-				repeat: 1
-			}
-		}, pkg.fixture, opts);
+			pkg.fixture,
+			opts
+		);
 
-		if (typeof this._opts.templateData === 'undefined') {
+		if (typeof this._opts.templateData === "undefined") {
 			this._opts.templateData = {};
 		}
 
-		this._name = name || 'tmpdir';
+		this._name = name || "tmpdir";
 		this._basedir = opts.basedir || this.setBaseDirectory();
 		this._loremIpsum = loremIpsum(this._opts.loremIpsum);
 		this.patternGenerator();
@@ -147,17 +151,26 @@ export class Fixture extends events.EventEmitter {
 		}
 		tempDirectories.add(this.dir);
 
-		if (this.name === 'tmpdir' || this.name === 'loremIpsum' || this.name === 'pattern') {
+		if (
+			this.name === "tmpdir" ||
+			this.name === "loremIpsum" ||
+			this.name === "pattern"
+		) {
 			return this;
 		}
 
-		this._src = path.resolve(join(this._opts.fixtureDirectory || './__tests__/fixtures', this.name));
+		this._src = path.resolve(
+			join(
+				this._opts.fixtureDirectory || "./__tests__/fixtures",
+				this.name
+			)
+		);
 		if (!fs.existsSync(this.src)) {
 			throw new Error(`Invalid fixture name given: ${name}`);
 		}
 
 		fs.copySync(this.src, this.dir);
-		this._opts.templateData['DIR'] = join(this.dir);
+		this._opts.templateData["DIR"] = join(this.dir);
 
 		// get the list of all files in the destination and scan them all for
 		// replacement values.
@@ -167,24 +180,28 @@ export class Fixture extends events.EventEmitter {
 			inp = format(inp.toString(), this._opts.templateData);
 			fs.writeFileSync(file.path, inp);
 
-			if (file.path === join(this.dir, this._opts.jsonFile || 'obj.json')) {
+			if (
+				file.path === join(this.dir, this._opts.jsonFile || "obj.json")
+			) {
 				this._obj = JSON.parse(inp);
 			}
 
-			if (file.path === join(this.dir, this._opts.dataFile || 'data.list')) {
+			if (
+				file.path === join(this.dir, this._opts.dataFile || "data.list")
+			) {
 				this._data = getFileList(file.path);
 			}
 		}, this);
 
 		pushd(this.dir);
-		const script: string = join(this.dir, opts.script || 'fixture.js');
+		const script: string = join(this.dir, opts.script || "fixture.js");
 		if (fs.existsSync(script)) {
 			child_process.execSync(`node ${script}`);
 			fs.removeSync(script);
 		}
 		popd();
 
-		this.emit('loaded');
+		this.emit("loaded");
 	}
 
 	/**
@@ -193,12 +210,11 @@ export class Fixture extends events.EventEmitter {
 	 * string is 26 rows with 80 columns, where each default chevron is A-Z
 	 */
 	private patternGenerator() {
-
 		const opts = this._opts.pattern;
 
 		// Set the chevrons to a-z if none given in configuration
 		if (opts.chevrons.length <= 0) {
-			for (let i = 'a'.charCodeAt(0); i <= 'z'.charCodeAt(0); i++) {
+			for (let i = "a".charCodeAt(0); i <= "z".charCodeAt(0); i++) {
 				opts.chevrons.push(String.fromCharCode(i));
 			}
 		}
@@ -233,16 +249,16 @@ export class Fixture extends events.EventEmitter {
 	 * @returns {string} the path location for the base directory
 	 */
 	public setBaseDirectory() {
-		let base = '';
+		let base = "";
 		if (process.env.TMP) {
 			base = process.env.TMP;
 		} else if (process.env.TEMP) {
 			base = process.env.TEMP;
 		} else {
-			base = join('~/', '.tmp');
+			base = join("~/", ".tmp");
 		}
 
-		return join(base, 'unit-test-data', path.sep);
+		return join(base, "unit-test-data", path.sep);
 	}
 
 	/**
