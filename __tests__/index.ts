@@ -64,6 +64,11 @@ test("Load test fixture 2", () => {
 	const fixture = new Fixture("test-fixture-2");
 
 	expect(fixture).toBeDefined();
+	expect(fixture.obj).toBeDefined();
+	expect(fixture.jsonObj).toBeDefined();
+	expect(fixture.json).toBeDefined();
+	expect(typeof fixture.json).toBe("string");
+
 	expect(Object.prototype.hasOwnProperty.call(fixture.obj, "testData")).toBe(
 		true
 	);
@@ -83,6 +88,11 @@ test("Load test fixture 3 and perform replacement", () => {
 	});
 
 	expect(fixture).toBeDefined();
+	expect(fixture.obj).toBeDefined();
+	expect(fixture.jsonObj).toBeDefined();
+	expect(fixture.json).toBeDefined();
+	expect(typeof fixture.json).toBe("string");
+
 	expect(Object.prototype.hasOwnProperty.call(fixture.obj, "testData")).toBe(
 		true
 	);
@@ -107,6 +117,12 @@ test("Load test fixture 4 and perform replacement after copy", () => {
 	expect(fs.existsSync(fixture.dir)).toBe(true);
 	expect(fs.existsSync(join(fixture.dir, "test-directory"))).toBe(true);
 	expect(fs.existsSync(join(fixture.dir, "test-file.txt"))).toBe(true);
+
+	expect(fixture.obj).toBeDefined();
+	expect(fixture.jsonObj).toBeDefined();
+	expect(fixture.json).toBeDefined();
+	expect(typeof fixture.json).toBe("string");
+
 	expect(
 		fs.existsSync(join(fixture.dir, "test-directory", "somefile.json"))
 	).toBe(true);
@@ -274,4 +290,35 @@ test("Test creation of a custom test pattern string", () => {
 
 	// (chevrons * columns * repeat) + newlines
 	expect(fixture.pattern.length).toBe(3 * 80 * 5 + 15);
+});
+
+test("Test opening a YAML file with default file name", () => {
+	const fixture = new Fixture("yaml");
+
+	expect(fixture).toBeDefined();
+	expect(fixture.yamlObj).toBeDefined();
+	expect(fixture.yaml).toBeDefined();
+	expect(typeof fixture.yaml).toBe("string");
+
+	expect(fixture.yamlObj["person"][0]["name"]).toBe("John Doe");
+	expect(fixture.yamlObj["person"][1]["name"]).toBe("Jane Doe");
+});
+
+test("Test opening a YAML file with an override file name and template replacement", () => {
+	const fixture = new Fixture("yaml-named", {
+		yamlFile: "somefile.yaml",
+		templateData: {
+			replaceMe: "test data"
+		}
+	});
+
+	expect(fixture).toBeDefined();
+	expect(fixture.yamlObj).toBeDefined();
+	expect(fixture.yaml).toBeDefined();
+	expect(typeof fixture.yaml).toBe("string");
+
+	expect(fixture.yamlObj["person"][0]["name"]).toBe("John Doe");
+	expect(fixture.yamlObj["person"][1]["name"]).toBe("Jane Doe");
+	expect(fixture.yamlObj["person"][0]["note"]).toBe("test data");
+	expect(fixture.yamlObj["person"][1]["note"]).toBe("test data");
 });

@@ -3,6 +3,7 @@
 import * as child_process from "child_process";
 import * as events from "events";
 import * as fs from "fs-extra";
+import {load} from "js-yaml";
 import {repeat} from "lodash";
 import * as loremIpsum from "lorem-ipsum";
 import * as path from "path";
@@ -37,6 +38,7 @@ export interface FixtureOpts {
 	dataFile?: string;
 	fixtureDirectory?: string;
 	jsonFile?: string;
+	yamlFile?: string;
 	script?: string;
 	templateData?: {[name: string]: string};
 	loremIpsum?: any;
@@ -91,18 +93,22 @@ export class Fixture extends events.EventEmitter {
 	private _dir: string = "";
 	private _data: string[] = [];
 	private _files: string[] = [];
+	private _json: string = "";
+	private _jsonObj: any = {};
 	private _loremIpsum: string = "";
 	private _name: string = "";
 	private _obj: any = {};
 	private _opts: FixtureOpts;
 	private _pattern: string = "";
 	private _src: string = "";
+	private _yaml: string = "";
+	private _yamlObj: any = {};
 
 	/**
 	 * Creates an instance of a fixture object for use in a unit test.  By
 	 * default it looks lin ./test/fixtures.
 	 * @param [name] {string} the name of the fixture to load
-	 * @param [opts] {object} optional arguments (see README for details)
+	 * @param [opts] {FixtureOpts} optional arguments (see README for details)
 	 * @constructor
 	 */
 	constructor(name?: string, opts: FixtureOpts = {}) {
@@ -126,7 +132,8 @@ export class Fixture extends events.EventEmitter {
 					chevrons: [],
 					columns: 80,
 					repeat: 1
-				}
+				},
+				yamlFile: "obj.yaml"
 			},
 			pkg.fixture,
 			opts
@@ -183,7 +190,15 @@ export class Fixture extends events.EventEmitter {
 			if (
 				file.path === join(this.dir, this._opts.jsonFile || "obj.json")
 			) {
-				this._obj = JSON.parse(inp);
+				this._json = inp;
+				this._obj = this._jsonObj = JSON.parse(inp);
+			}
+
+			if (
+				file.path === join(this.dir, this._opts.yamlFile || "obj.yaml")
+			) {
+				this._yaml = inp;
+				this._yamlObj = load(inp);
 			}
 
 			if (
@@ -300,6 +315,14 @@ export class Fixture extends events.EventEmitter {
 		return this._files;
 	}
 
+	get json() {
+		return this._json;
+	}
+
+	get jsonObj() {
+		return this._jsonObj;
+	}
+
 	get loremIpsum() {
 		return this._loremIpsum;
 	}
@@ -318,5 +341,13 @@ export class Fixture extends events.EventEmitter {
 
 	get src() {
 		return normalize(this._src);
+	}
+
+	get yaml() {
+		return this._yaml;
+	}
+
+	get yamlObj() {
+		return this._yamlObj;
 	}
 }

@@ -1,0 +1,9 @@
+person:
+    - name: John Doe
+      job: Testing
+      skill: Average
+      note: {replaceMe}
+    - name: Jane Doe
+      job: Developer
+      skill: Elite
+      note: {replaceMe}

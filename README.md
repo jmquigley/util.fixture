@@ -74,7 +74,7 @@ let fixture = new Fixture('simple-json');
 ... // your test
 ```
 
-Similar to a simple fixture above.  If the fixture contains a file with the name `obj.json` then it will load the fixture, parse this JSON, perform template replacement, and save it within the fixture in an exposed field named `fixture.obj`.  The structure of the fixture would be:
+Similar to a simple fixture above.  If the fixture contains a file with the name `obj.json` then it will load the fixture with this JSON file, parse this JSON, perform template replacement, and save it within the fixture in an exposed field named `fixture.obj` and `fixture.jsonObj` (these will reference the same object).  The structure of the fixture would be:
 
 ```
 ./__tests__/fixtures/simple-json/
@@ -82,6 +82,8 @@ Similar to a simple fixture above.  If the fixture contains a file with the name
     somedirectory/
         ...
 ```
+
+One can see the contents of the JSON file with the property `fixture.json`.  This is the string data read from the given JSON file.
 
 
 #### JSON with Template Replacement
@@ -105,7 +107,9 @@ Loads a JSON file saved in a fixture location and replaces custom text strings u
     "testBool": true
 }
 ```
+
 resulting in:
+
 ```json
 {
     "testData": "test data",
@@ -114,6 +118,9 @@ resulting in:
 ```
 
 It will lead to a fixture object returned like the previous two examples.
+
+#### Simple YAML
+The fixture will also process YAML files inside of a fixture.  If the fixture contains a file with the name `obj.yaml` then it will load the fixture with this YAML file, parse it, performan template replacement, and save it within the fixture in an exposed filed named `fixture.yamlObj`.  Note that `fixture.obj` is the legacy name for JSON objects and NOT YAML.  The fixture will also contain a property named `fixture.yaml` which is a string representing the contents of the YAML file.
 
 
 #### Fixture with Template Replacement
@@ -296,11 +303,13 @@ The following options can be used to customize the fixture.  They can be set as 
 - `basedir {string}`: The base location where the fixture will be temporarily located. The default location is determined by the environment variable `TMP` first or `TEMP` if TMP is not found.  If neither of these are set, then `~/.tmp/unit-test-data` is created and used within the users home directory.  This must be a directory that is writable by the user running the test.
 - `dataFile {string}`: The name of the data list file, within the fixture location, that will be parsed and saved into `fixture.data` as an array of lines. By default this file is `data.list`.  It is parsed by the [util.filelist](https://www.npmjs.com/package/util.filelist) module.  This is a way to get a large list of information into the fixture.
 - `fixtureDirectory {string}`: The location within the project where fixtures are found.  The default is `./__tests__/fixtures`.
-- `jsonFile {string}`: The name of a JSON data file that will be parsed and saved into `fixture.obj`.  By default this file is named `obj.json` within the fixture.
+- `jsonFile {string}`: The name of a JSON data file that will be parsed and saved into `fixture.obj` and `fixture.jsonObj`.  By default this file is named `obj.json` within the fixture.
 - `pattern {object}` - configuration overrides for the pattern generator.  It contains 3 attributes: columns, repeat count, and an array of chevrons.
 - `loremIpsum {object}`: [configuration options](https://github.com/knicklabs/lorem-ipsum.js/blob/master/README.md) for the lorem ipsum generator.
 - `script {string}`: The name of the node script that will be executed when the fixture is instantiated.  The default nam is `fixture.js`.
 - `templateData {object}`: a map of key/value pairs that are used for replacement within each fixture file. The [string-template](https://www.npmjs.com/package/string-template) library is used to perform the replacement. All files are checked.
+- `yamlFile {string}`: The name of a YAML data file that will be parsed and saved into `fixture.yamlObj`.  By default this file is named `obj.yaml` within the fixture.
+
 
 ##### attributes
 Instantiation of the class returns an object with the following attributes:
@@ -310,13 +319,16 @@ Instantiation of the class returns an object with the following attributes:
 - `.data` - if the fixture contains a file named `data.list` or a text file named by the `dataFile` option, then it will be processed and placed here.  This is an Array object when defined.
 - `.dir` - the location of the temporary directory created for this fixture.
 - `.files` - an array of files that were found within the fixture and placed into the temporary `.dir`.
+- `.json` - a text string representing a JSON file that was read into the fixture.  It's an empty string if there was no JSON file to process.
+- `.jsonObj` - if the fixture contains `obj.json` or a JSON file named by the `jsonFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.  There is also an alias named `.obj`.
 - `.name` - the name of the requested fixture.  This is the first string parameter to the Fixture constructor.
 - `.loremIpsum` - a string containing a randomly generated lorem ipsum string/sentence.
-- `.obj` - if the fixture contains `obj.json` or a JSON file named by the `jsonFile` option, then it is parsed and the contents of that JSON are stored here.  The JSON file will go through template replacement before it is parsed.
 - `.pattern` - a string contained a MxN repeating pattern.
 - `.read({filename}): string` - Reads the contents of one of the files within the fixture and returns it as a string.  The filename is a relative path within the fixture (the absolute path is resolved by the class).  This is the contents of the file after it has been processed through template replacement.
 - `.src` - the absolute directory path for the fixture files.
 - `.toString()` - returns a string that shows the internal representation of the fixture.  It will show all of these attributes and the options that were passed to the class when it was instantiated.
+- `.yaml` - a text string representing a YAML file that was read into the fixture.  It's an empty string if there was no YAML file to process.
+- `.yamlObj` - if the fixture contains `obj.yaml` or a YAML file named by the `yamlFile` option, then it is parsed and the contents of that YAML are stored here.  The YAML file will go through template replacement before it is parsed.
 
 ##### events
 

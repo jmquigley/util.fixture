@@ -1,0 +1,7 @@
+person:
+    - name: John Doe
+      job: Testing
+      skill: Average
+    - name: Jane Doe
+      job: Developer
+      skill: Elite
