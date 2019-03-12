@@ -3,7 +3,7 @@
 import * as fs from "fs-extra";
 import {join} from "util.join";
 import * as uuid from "uuid";
-import {Fixture} from "../index";
+import {cleanup, Fixture} from "../index";
 
 const pkg = require("../package.json");
 
@@ -13,17 +13,7 @@ process.env.TMP = "";
 process.env.TEMP = "";
 
 afterAll((done) => {
-	Fixture.cleanup((err: Error, directories: string[]) => {
-		if (err) {
-			throw new Error(err.message);
-		}
-
-		directories.forEach((directory: string) => {
-			expect(fs.existsSync(directory)).toBe(false);
-		});
-
-		done();
-	});
+	cleanup({done, message: "done with fixture testing"});
 });
 
 test("Copy and destroy test fixture 1", () => {

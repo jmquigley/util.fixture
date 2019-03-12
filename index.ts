@@ -7,6 +7,7 @@ import {load} from "js-yaml";
 import {repeat} from "lodash";
 import * as loremIpsum from "lorem-ipsum";
 import * as path from "path";
+import assert from "power-assert";
 import * as rimraf from "rimraf";
 import * as format from "string-template";
 import {popd, pushd} from "util.chdir";
@@ -351,3 +352,41 @@ export class Fixture extends events.EventEmitter {
 		return this._yamlObj;
 	}
 }
+
+/**
+ * Convenience wrapper function used by testing scripts to perform cleanup of
+ * temporary files.  Typically this would be used in the "afterAll" call of
+ * a jest test (or the test function executed at the end of all testing)
+ * @param options=null {any} - general options for the cleanup
+ * @param [options.done=null] {any} - a callback semaphore used by async tests to signal
+ * that processing is "done" to the testing framework.
+ * @param [options.message=""] {string} - a message that will be printed to the console
+ * when this cleanup operation is executed.
+ */
+export function cleanup(options: any = null): void {
+	options = Object.assign(
+		{
+			done: null,
+			message: ""
+		},
+		options || {}
+	);
+
+	if (options.message) {
+		console.log(`final cleanup: ${options.message}`);
+	}
+
+	Fixture.cleanup((err: Error, directories: string[]) => {
+		if (err) {
+			throw new Error(`Failure cleaning up after test: ${err.message}`);
+		}
+
+		directories.forEach((directory: string) => {
+			assert(!fs.existsSync(directory));
+		});
+
+		options.done ? options.done() : nil();
+	});
+}
+
+export default Fixture;

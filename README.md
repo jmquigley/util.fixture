@@ -284,6 +284,16 @@ Note that when using [ava] the hook `test.after.always` is executed within each 
 
 See [tests.js](https://github.com/jmquigley/util.fixture/blob/master/test/tests.ts) in this repository for examples of these usage patterns.
 
+The module also contains a helper function named `cleanup()` which handles the process listed above.  The example below works with [jest](https://jestjs.io/) testing.
+
+```javascript
+import {cleanup, Fixture} from "util.fixture";
+
+afterall((done) => {
+    cleanup({done, message: "done with fixture testing"});
+});
+```
+
 
 ## API
 
