@@ -1,6 +1,6 @@
 {
 	"name": "util.fixture",
-	"version": "0.0.71",
+	"version": "0.0.72",
 	"author": "jmquigley <jmquigley@outlook.com>",
 	"description": "Test fixture library",
 	"private": false,
@@ -29,6 +29,7 @@
 		"klaw-sync": "^6.0.0",
 		"lodash": "^4.17.11",
 		"lorem-ipsum": "^1.0.6",
+		"power-assert": "^1.6.1",
 		"rimraf": "^2.6.3",
 		"string-template": "^1.0.0",
 		"util.chdir": "0.0.41",
@@ -61,7 +62,6 @@
 		"babel-preset-minify": "^0.5.0",
 		"coveralls": "^3.0.3",
 		"jest": "^24.4.0",
-		"power-assert": "^1.6.1",
 		"prettier": "^1.16.4",
 		"tslint": "^5.13.1",
 		"tslint-config-prettier": "^1.18.0",
