@@ -1,20 +1,18 @@
-"use strict";
-
 import * as child_process from "child_process";
 import * as events from "events";
 import * as fs from "fs-extra";
 import {load} from "js-yaml";
 import {repeat} from "lodash";
-import * as loremIpsum from "lorem-ipsum";
+import {loremIpsum} from "lorem-ipsum";
 import * as path from "path";
 import assert from "power-assert";
 import * as rimraf from "rimraf";
 import * as format from "string-template";
 import {popd, pushd} from "util.chdir";
-import {nl} from "util.constants";
+import {encoding, nl} from "util.constants";
 import {getFileList} from "util.filelist";
 import {join, normalize} from "util.join";
-import {encoding, nil, NilCallback} from "util.toolbox";
+import {nil, NilCallback} from "util.toolbox";
 import {Semaphore} from "util.wait";
 import * as uuid from "uuid";
 
